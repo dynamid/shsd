@@ -7,6 +7,7 @@ import datetime
 import re
 import requests
 import time
+import geojson
 
 # local imports
 from daemon import startBackgoundTasks
@@ -147,7 +148,8 @@ def isLocalIP(ip):
 
 @app.route('/api/getGeoJSON/<user>')
 def getGeoJSON(user):
-	return ("un GeoJSON du user " + user)
+	mygeojson = geojson.Point((-115.81, 37.24))
+	return (geojson.dumps(mygeojson, sort_keys=True))
 
 
 if __name__ == '__main__':

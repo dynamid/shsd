@@ -144,10 +144,13 @@ def addConnection(ip, user, service):
     return ("connection added : " + user)
 
 def isLocalIP(ip):
-    return (ip.startswith("192.168.") or ip.startswith("172.16.") or ip.startswith("10."))
+    return (ip.startswith("192.168.") or ip.startswith("172.16.") or ip.startswith("10.") or ip.startswith("127."))
 
 @app.route('/api/getGeoJSON/<user>')
 def getGeoJSON(user):
+	s = select([accounts.c.ip_geoloc]).where(accounts.c.login == user)
+	for row in Session.execute(s):
+		print(row[accounts.c.ip_geoloc])
 	mygeojson = geojson.Point((-115.81, 37.24))
 	return (geojson.dumps(mygeojson, sort_keys=True))
 

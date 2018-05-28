@@ -22,7 +22,7 @@ def updateIPInfo():
                                 ip_country=onyphe.json()['results'][0]['country_name'],
                                 ip_countrycode=onyphe.json()['results'][0]['country'],
                                 ip_city=onyphe.json()['results'][0]['city'],
-                                ip_geoloc=onyphe.json()['results'][0]['geolocation']))
+                                ip_geoloc=onyphe.json()['results'][0]['location']))
         Session.commit()
         Session.remove()
         time.sleep(30)

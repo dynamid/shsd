@@ -131,7 +131,7 @@ def addConnection(ip, user, service):
                 Session.execute(accounts.insert(), [
                     {'login': user, 'ip': ip, 'firstseen': now, 'lastseen': now, 'ip_org': onyphe.json()['results'][0]['organization'],
                     'ip_country': onyphe.json()['results'][0]['country_name'], 'ip_countrycode': onyphe.json()['results'][0]['country'],
-                    'ip_city': onyphe.json()['results'][0]['city'], 'ip_geoloc': onyphe.json()['results'][0]['geolocation']}])
+                    'ip_city': onyphe.json()['results'][0]['city'], 'ip_geoloc': onyphe.json()['results'][0]['location']}])
             else:
                 Session.execute(accounts.insert(), [
                     {'login': user, 'ip': ip, 'firstseen': now, 'lastseen': now}
@@ -145,7 +145,9 @@ def addConnection(ip, user, service):
 def isLocalIP(ip):
     return (ip.startswith("192.168.") or ip.startswith("172.16.") or ip.startswith("10."))
 
-
+@app.route('/api/getGeoJSON/<user>')
+def getGeoJSON(user):
+	return ("un GeoJSON du user " + user)
 
 
 if __name__ == '__main__':

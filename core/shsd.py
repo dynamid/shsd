@@ -87,7 +87,8 @@ def addConnection(ip, user, service):
     if (known == 0):
         if (isLocalIP(ip)):
             Session.execute(accounts.insert(), [
-                {'login': user, 'ip': ip, 'firstseen': now, 'lastseen': now, 'ip_org': "LAN"])
+                {'login': user, 'ip': ip, 'firstseen': now, 'lastseen': now, 'ip_org': "LAN", 'is_populated': True}
+                ])
         else:
             onyphe = requests.get("https://www.onyphe.io/api/geoloc/" + ip)
             if (onyphe.status_code == 200 and len(onyphe.json()['results']) > 0):
@@ -96,9 +97,9 @@ def addConnection(ip, user, service):
                     {'login': user, 'ip': ip, 'firstseen': now, 'lastseen': now, 'ip_org': onyphe.json()['results'][0]['organization'],
                     'ip_country': onyphe.json()['results'][0]['country_name'], 'ip_countrycode': onyphe.json()['results'][0]['country'],
                     'ip_city': onyphe.json()['results'][0]['city'],
-					'ip_geoloc': onyphe.json()['results'][0]['location'],
 					'ip_longitude': onyphe.json()['results'][0]['longitude'],
-					'ip_latitude': onyphe.json()['results'][0]['latitude']}])
+					'ip_latitude': onyphe.json()['results'][0]['latitude'],
+					'is_populated': True}])
             else:
                 Session.execute(accounts.insert(), [
                     {'login': user, 'ip': ip, 'firstseen': now, 'lastseen': now}

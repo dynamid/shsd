@@ -2,6 +2,7 @@ from sqlalchemy import *
 from sqlalchemy.sql import *
 from sqlalchemy.orm import scoped_session, sessionmaker
 
+
 metadata = MetaData()
 
 devices = Table('devices', metadata,
@@ -28,7 +29,9 @@ accounts = Table('accounts', metadata,
     Column('ip_city', String),
     Column('ip_geoloc', String),
 	Column('firstseen', Date),
-    Column('lastseen', Date))
+    Column('lastseen', Date),
+    Column('ip_longitude', Float),
+    Column('ip_latitude', Float))
 
 
 engine = create_engine('sqlite:///database.db', echo=False)

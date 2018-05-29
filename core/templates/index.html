@@ -1,58 +1,91 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>SHSD - Self-Hosting Security Dashboard</title>
-  <link rel="stylesheet" href="static/css/pure-min.css" type="text/css">
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <link rel="stylesheet" href="/../static/style.css">
+  <!-- inclure la carte -->
+  <script src='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js'></script>
+  <link href='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css' rel='stylesheet' />
 </head>
+
 <body>
-<div>
-<h2>Connected devices</h2>
-<!--
-{% if devices is defined and devices|length == 0 %}
-No device detected
-{% else %}
-{% for device in devices %}
-<p>{{ device }}</p>
-{% endfor %}
-{% endif %}
--->
+  <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v1.0.0/leaflet.markercluster.js'></script>
+  <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v1.0.0/MarkerCluster.css' rel='stylesheet' />
+  <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v1.0.0/MarkerCluster.Default.css' rel='stylesheet' />
 
+  <!-- menu -->
+  <header>
+    <div class="navigation-bar">
+      <div id="navigation-container">
+        <img src="../static/logo.png" alt="shsd" href="index.html">
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
 
-<table class="pure-table"><thead><tr><th>Label</th><th>IP</th><th>MAC</th><th>Description</th>
-<th>First seen</th><th>Last seen</th></tr></thead>
-{% for row in devices %}
-    <tr>
-      <td>{{ row['label'] }}</td>
-      <td>{{ row['ip'] }}</td>
-      <td>{{ row['hw'] }}</td>
-      <td>{{ row['manuf'] }}</td>
-      <td>{{ row['firstseen'] }}</td>
-      <td>{{ row['lastseen'] }}</td>
-    </tr>
-{% endfor %}
-</table>
+  <br>
+  <br>
 
-</div>
+  <div id='map'>
+    <br>
+    <button id='fit'>Fit to new log</button>
+    <script>
+      L.mapbox.accessToken = 'pk.eyJ1IjoiY3lsaWEiLCJhIjoiY2poNmZwcW1mMDJ4ZTJ3cGc5dmo1NzA1NyJ9.JU-g1DpPB6jTT-tiVYcUgw';
 
+      //------- afficher map + markers
+      var pos = {{center_map}};
+      console.log(pos);
+      var map = L.mapbox.map('map')
+        .setView([pos[1],pos[0]], 10)
+        //.fitBounds([[4.8721648, ], [43.50585,5.615985]])
+        .addLayer(L.mapbox.tileLayer('mapbox.streets'));
+      var myLayer = L.mapbox.featureLayer().addTo(map);
+      myLayer.loadURL('http://localhost:5000/api/getGeoJSON/user2'); //charge le contenu du // '/api/geoJson/user'
+      //------- afficher popup
 
-<div>
-<h2>Accounts used</h2>
-<table class="pure-table">
-<thead><tr><th>Account</th><th>Device</th><th>FAI</th><th>City</th>
-<th>First seen</th><th>Last seen</th></tr></thead>
-{% for row in connections %}
-    <tr>
-      <td>{{ row['user'] }}</td>
-      <td>{{ row['ip'] }}</td>
-      <td>{{ row['ip_org'] }}</td>
-      <td>{{ row['ip_city'] }}</td>
-      <td>{{ row['firstseen'] }}</td>
-      <td>{{ row['lastseen'] }}</td>
-    </tr>
-{% endfor %}
-</table>
+      map.on('click', 'places', function(e) {
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        var description = e.features[0].properties.description;
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+        new mapboxgl.Popup()
+          .setLngLat(coordinates)
+          .setHTML(description)
+          .addTo(map);
+      });
 
-</div>
+      //------- Changer le curseur quand il est sur un marker
+      map.on('mouseenter', 'places', function() {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+
+      //------- Rechanger le curseur quand il sort du marker
+      map.on('mouseleave', 'places', function() {
+        map.getCanvas().style.cursor = '';
+      });
+
+      //------- Ajouter une légende à la map
+      map.legendControl.addLegend('<strong>View of my logs</strong>');
+
+      //-------Aller à l'endroit ou le nouveau point apparaît
+      document.getElementById('fit').addEventListener('click', function() {
+        map.fitBounds([
+          pos,[32.958984, -5.353521]
+         ]);
+      });
+    </script>
+  </div>
+  <br>
+  <br>
+  <footer>
+    <p> ceci est le footer et sera rempli plus tard</p>
+  </footer>
 </body>
+
 </html>

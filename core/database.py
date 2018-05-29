@@ -31,7 +31,7 @@ accounts = Table('accounts', metadata,
     Column('lastseen', Date),
     Column('ip_longitude', Float),
     Column('ip_latitude', Float),
-    Column('is_populated', Boolean))
+    Column('is_populated', Boolean, default=False))
 
 
 engine = create_engine('sqlite:///database.db', echo=False)

@@ -27,11 +27,11 @@ accounts = Table('accounts', metadata,
     Column('ip_country', String),
     Column('ip_countrycode', String),
     Column('ip_city', String),
-    Column('ip_geoloc', String),
 	Column('firstseen', Date),
     Column('lastseen', Date),
     Column('ip_longitude', Float),
-    Column('ip_latitude', Float))
+    Column('ip_latitude', Float),
+    Column('is_populated', Boolean))
 
 
 engine = create_engine('sqlite:///database.db', echo=False)

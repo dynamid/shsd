@@ -87,8 +87,7 @@ def addConnection(ip, user, service):
     if (known == 0):
         if (isLocalIP(ip)):
             Session.execute(accounts.insert(), [
-                {'login': user, 'ip': ip, 'firstseen': now, 'lastseen': now, 'ip_org': "LAN"}
-                ])
+                {'login': user, 'ip': ip, 'firstseen': now, 'lastseen': now, 'ip_org': "LAN"])
         else:
             onyphe = requests.get("https://www.onyphe.io/api/geoloc/" + ip)
             if (onyphe.status_code == 200 and len(onyphe.json()['results']) > 0):
@@ -128,21 +127,13 @@ def getGeoJSON(user):
 	"marker-symbol": "telephone",
 	"description": "ip is : " + row[accounts.c.ip]
 	}))
-
-# 		#else : my_feature.append(geojson.Feature(geometry=geojson.Point((1, 2)),
-# 		properties={
-# "marker-color": "#0000ff",
-# "marker-size": "medium",
-# "marker-symbol": "car",
-# "description": "test pour affichage"
-# }))
 	mygeojson = geojson.FeatureCollection(my_feature)
 	return (geojson.dumps(mygeojson, sort_keys=True))
 
 #moyenne des latitude et longitude
 def getAvgPositions():
 	pos = []
-	s = select([func.avg(accounts.c.ip_longitude),func.avg(accounts.c.ip_latitude)]).distinct()
+	s = select([func.avg(accounts.c.ip_latitude),func.avg(accounts.c.ip_longitude)]).distinct()
 	for row in Session.execute(s):
 		pos.append(row[0])
 		pos.append(row[1])

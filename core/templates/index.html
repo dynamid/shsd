@@ -33,7 +33,6 @@
 
   <div id='map'>
     <br>
-    <button id='fit'>Fit to new log</button>
     <script>
       L.mapbox.accessToken = 'pk.eyJ1IjoiY3lsaWEiLCJhIjoiY2poNmZwcW1mMDJ4ZTJ3cGc5dmo1NzA1NyJ9.JU-g1DpPB6jTT-tiVYcUgw';
 
@@ -41,13 +40,12 @@
       var pos = {{center_map}};
       console.log(pos);
       var map = L.mapbox.map('map')
-        .setView([pos[1],pos[0]], 10)
-        //.fitBounds([[4.8721648, ], [43.50585,5.615985]])
+        .setView(pos, 8)
         .addLayer(L.mapbox.tileLayer('mapbox.streets'));
       var myLayer = L.mapbox.featureLayer().addTo(map);
-      myLayer.loadURL('http://localhost:5000/api/getGeoJSON/user2'); //charge le contenu du // '/api/geoJson/user'
-      //------- afficher popup
+      myLayer.loadURL('http://localhost:5000/api/getGeoJSON/user2');
 
+      //------- afficher popup
       map.on('click', 'places', function(e) {
         var coordinates = e.features[0].geometry.coordinates.slice();
         var description = e.features[0].properties.description;
@@ -73,12 +71,6 @@
       //------- Ajouter une légende à la map
       map.legendControl.addLegend('<strong>View of my logs</strong>');
 
-      //-------Aller à l'endroit ou le nouveau point apparaît
-      document.getElementById('fit').addEventListener('click', function() {
-        map.fitBounds([
-          pos,[32.958984, -5.353521]
-         ]);
-      });
     </script>
   </div>
   <br>

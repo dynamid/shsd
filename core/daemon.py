@@ -6,19 +6,20 @@ import requests
 import random
 from flask import *
 
-
 from database import *
+
+onyphe_mylocation = None
 
 def isLocalIP(ip):
     return (ip.startswith("192.168.") or ip.startswith("172.16.") or ip.startswith("10.") or ip.startswith("127."))
 
 def updateIPInfo():
     print("Updating IP Info")
-    onyphe_mylocation = None
     s = select([accounts]).where(accounts.c.is_populated == False)
     for row in Session.execute(s):
         print('Updating ' + row[accounts.c.ip])
         if (isLocalIP(row[accounts.c.ip])):
+            global onyphe_mylocation
             if (onyphe_mylocation == None):
                 onyphe_myip = requests.get("https://www.onyphe.io/api/myip")
                 if (onyphe_myip.status_code == 200 and len(onyphe_myip.json()['myip']) > 0):

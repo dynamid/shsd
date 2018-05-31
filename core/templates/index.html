@@ -43,12 +43,7 @@
         .setView(pos, 8)
         .addLayer(L.mapbox.tileLayer('mapbox.streets'));
       var myLayer = L.mapbox.featureLayer().addTo(map);
-<<<<<<< HEAD
-      myLayer.loadURL('http://localhost:5000/api/getGeoJSON/user2');
-=======
       myLayer.loadURL('http://localhost:5000/api/getGeoJSON/user1'); //charge le contenu du // '/api/geoJson/user'
-      //------- afficher popup
->>>>>>> b5efd54ab84271bbab0f52dbd8a3120fd390a84e
 
       //------- afficher popup
       map.on('click', 'places', function(e) {

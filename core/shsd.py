@@ -8,6 +8,7 @@ import re
 import requests
 import time
 import geojson
+import collections
 
 # local imports
 from daemon import startBackgoundTasks
@@ -86,9 +87,14 @@ def addConnection(ip, user, service):
     print(known)
     if (known == 0):
         if (isLocalIP(ip)):
+            onyphe_myip = requests.get("https://www.onyphe.io/api/myip")
+            myip = onyphe_myip.json()['myip']
+            onyphe_mylocation = requests.get("https://www.onyphe.io/api/geoloc/" + myip)
             Session.execute(accounts.insert(), [
-                {'login': user, 'ip': ip, 'firstseen': now, 'lastseen': now, 'ip_org': "LAN", 'is_populated': True}
-                ])
+            	{'login': user, 'ip': ip, 'firstseen': now, 'lastseen': now, 'ip_org': "LAN", 'is_populated': True,
+				 'ip_longitude': onyphe_mylocation.json()['results'][0]['longitude'],
+				 'ip_latitude': onyphe_mylocation.json()['results'][0]['latitude'],'is_populated': True}
+				 ])
         else:
             onyphe = requests.get("https://www.onyphe.io/api/geoloc/" + ip)
             if (onyphe.status_code == 200 and len(onyphe.json()['results']) > 0):
@@ -112,15 +118,14 @@ def addConnection(ip, user, service):
 
 def isLocalIP(ip):
     return (ip.startswith("192.168.") or ip.startswith("172.16.") or ip.startswith("10.") or ip.startswith("127."))
+
 #ajouter dynamiquement les markers sur la map
 @app.route('/api/getGeoJSON/<user>')
 def getGeoJSON(user):
 	my_feature = []
 	s = select([accounts.c.ip_longitude,accounts.c.ip_latitude,accounts.c.ip]).where(accounts.c.login == user)
 	for row in Session.execute(s):
-		print(row[accounts.c.ip_latitude])
-		print(row[accounts.c.ip_longitude])
-		if (row[accounts.c.ip_longitude] != None and row[accounts.c.ip_latitude] != None) :
+
 			my_feature.append(geojson.Feature(geometry=geojson.Point((row[accounts.c.ip_longitude], row[accounts.c.ip_latitude])),
 			properties={
 	"marker-color": "#0000ff",
@@ -140,7 +145,6 @@ def getAvgPositions():
 		pos.append(row[1])
 
 	return pos
-
 
 
 if __name__ == '__main__':

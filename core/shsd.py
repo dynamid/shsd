@@ -85,43 +85,7 @@ def addDevice(ip, hw):
     Session.remove()
     return ("device added : " + hw)
 
-@app.route('/api/addConnection/<service>/<ip>/<user>')
-def addConnection(ip, user, service):
-    now = datetime.datetime.utcnow()
-    s = select([accounts.c.login, accounts.c.ip]).where(and_(
-                                accounts.c.ip == ip, accounts.c.login == user)).count()
-    known = Session.execute(s).scalar()
-    print(known)
-    if (known == 0):
-        if (isLocalIP(ip)):
-            onyphe_myip = requests.get("https://www.onyphe.io/api/myip")
-            myip = onyphe_myip.json()['myip']
-            onyphe_mylocation = requests.get("https://www.onyphe.io/api/geoloc/" + myip)
-            Session.execute(accounts.insert(), [
-            	{'login': user, 'ip': ip, 'firstseen': now, 'lastseen': now, 'ip_org': "LAN", 'is_populated': True,
-				 'ip_longitude': onyphe_mylocation.json()['results'][0]['longitude'],
-				 'ip_latitude': onyphe_mylocation.json()['results'][0]['latitude'],'is_populated': True}
-				 ])
-        else:
-            onyphe = requests.get("https://www.onyphe.io/api/geoloc/" + ip)
-            if (onyphe.status_code == 200 and len(onyphe.json()['results']) > 0):
-                print(onyphe.json()['results'][0]['organization'])
-                Session.execute(accounts.insert(), [
-                    {'login': user, 'ip': ip, 'firstseen': now, 'lastseen': now, 'ip_org': onyphe.json()['results'][0]['organization'],
-                    'ip_country': onyphe.json()['results'][0]['country_name'], 'ip_countrycode': onyphe.json()['results'][0]['country'],
-                    'ip_city': onyphe.json()['results'][0]['city'],
-					'ip_longitude': onyphe.json()['results'][0]['longitude'],
-					'ip_latitude': onyphe.json()['results'][0]['latitude'],
-					'is_populated': True}])
-            else:
-                Session.execute(accounts.insert(), [
-                    {'login': user, 'ip': ip, 'firstseen': now, 'lastseen': now}
-                ])
-    else:
-        Session.execute(accounts.update().where(and_(accounts.c.ip == ip, accounts.c.login == user)).values(lastseen=now))
-    Session.commit()
-    Session.remove()
-    return ("connection added : " + user)
+
 
 @app.route('/api/addConnectionJSON', methods=['POST'])
 def addConnectionJSON():

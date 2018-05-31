@@ -34,15 +34,6 @@ def parselog():
             accounts.add(""+ip+"::"+user+"::"+months[month]+"::"+day) #append({'user' : user, 'ip' : ip})
     return accounts
 
-def push(accounts):
-    for account in accounts:
-        #print(account)
-        newaccount = account.split("::")
-        #print(newaccount[0] + " and " + newaccount[1])
-        r = requests.get(webappurl + "api/addConnection/IMAP/" + newaccount[0] + "/" + newaccount[1] + "/" + newaccount[2] + "/" + newaccount[3])
-        #print(r.content)
-    return
-
 def jsonify(accounts):
     res = []
     for account in accounts:
@@ -58,6 +49,4 @@ def pushJSON(accounts):
 
 if __name__ == '__main__':
     accounts =  parselog()
-    #print("Adding following connections : " + str(accounts))
-    #print("\n\nIn JSON : " + jsonify(accounts))
     pushJSON(accounts)

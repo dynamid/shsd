@@ -1,0 +1,58 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>SHSD - Self-Hosting Security Dashboard</title>
+  <link rel="stylesheet" href="static/css/pure-min.css" type="text/css">
+</head>
+<body>
+<div>
+<h2>Connected devices</h2>
+<!--
+{% if devices is defined and devices|length == 0 %}
+No device detected
+{% else %}
+{% for device in devices %}
+<p>{{ device }}</p>
+{% endfor %}
+{% endif %}
+-->
+
+
+<table class="pure-table"><thead><tr><th>Label</th><th>IP</th><th>MAC</th><th>Description</th>
+<th>First seen</th><th>Last seen</th></tr></thead>
+{% for row in devices %}
+    <tr>
+      <td>{{ row['label'] }}</td>
+      <td>{{ row['ip'] }}</td>
+      <td>{{ row['hw'] }}</td>
+      <td>{{ row['manuf'] }}</td>
+      <td>{{ row['firstseen'] }}</td>
+      <td>{{ row['lastseen'] }}</td>
+    </tr>
+{% endfor %}
+</table>
+
+</div>
+
+
+<div>
+<h2>Accounts used</h2>
+<table class="pure-table">
+<thead><tr><th>Account</th><th>Device</th><th>FAI</th><th>City</th>
+<th>First seen</th><th>Last seen</th></tr></thead>
+{% for row in connections %}
+    <tr>
+      <td>{{ row['user'] }}</td>
+      <td>{{ row['ip'] }}</td>
+      <td>{{ row['ip_org'] }}</td>
+      <td>{{ row['ip_city'] }}</td>
+      <td>{{ row['firstseen'] }}</td>
+      <td>{{ row['lastseen'] }}</td>
+    </tr>
+{% endfor %}
+</table>
+
+</div>
+</body>
+</html>

@@ -9,9 +9,11 @@ import requests
 import time
 import geojson
 import collections
+import threading
+
 
 # local imports
-from daemon import startBackgoundTasks
+from daemon import startBackgoundTasks, updateIPInfo
 from database import *
 
 
@@ -25,6 +27,11 @@ app = Flask(__name__)
 @app.route('/index')
 def index():
 	return render_template('index.html', devices=getDevices(), connections=getConnections(), center_map=getAvgPositions())
+
+@app.route('/details')
+def details():
+	return render_template('details.html', devices=getDevices(), connections=getConnections())
+
 
 @app.route('/api/getDevices')
 def getJSONDevices():
@@ -116,6 +123,37 @@ def addConnection(ip, user, service):
     Session.remove()
     return ("connection added : " + user)
 
+@app.route('/api/addConnectionJSON', methods=['POST'])
+def addConnectionJSON():
+	if not request.json:
+		abort(400)
+	content = json.loads(request.get_json(force=True))
+	service = content['service']
+	connections = content['connections']
+	for connection in connections:
+		date = datetime.date(int(connection['year']),int(connection['month']),int(connection['day']))
+		ip = connection['ip']
+		user = connection['user']
+		s = select([accounts.c.login, accounts.c.ip, accounts.c.lastseen]).where(and_(
+		               accounts.c.ip == ip, accounts.c.login == user)).count()
+		known = Session.execute(s).scalar()
+		if (known == 0):
+			Session.execute(accounts.insert(), [
+		                {'login': user, 'ip': ip, 'firstseen': date, 'lastseen': date, 'is_populated': False}
+		           ])
+		else:
+			s = select([accounts.c.login, accounts.c.ip, accounts.c.lastseen]).where(and_(
+					accounts.c.ip == ip, accounts.c.login == user))
+			for row in Session.execute(s):
+				olddate = row[accounts.c.lastseen]
+				if (date > olddate):
+					Session.execute(accounts.update().where(and_(accounts.c.ip == ip, accounts.c.login == user)).values(lastseen=date))
+	Session.commit()
+	Session.remove()
+	#threading.Thread(target=updateIPInfo).start()
+	startBackgoundTasks()
+	return("JSON ok")
+
 def isLocalIP(ip):
     return (ip.startswith("192.168.") or ip.startswith("172.16.") or ip.startswith("10.") or ip.startswith("127."))
 
@@ -148,5 +186,5 @@ def getAvgPositions():
 
 
 if __name__ == '__main__':
-    startBackgoundTasks()
-app.run(debug=True)
+	startBackgoundTasks() #url_for('populateIpInfo'))
+	app.run(debug=False)

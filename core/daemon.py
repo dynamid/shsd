@@ -30,6 +30,9 @@ def updateIPInfo():
                             ip_longitude= onyphe_mylocation.json()['results'][0]['longitude'],
            				    ip_latitude= onyphe_mylocation.json()['results'][0]['latitude'],
                             ip_as=onyphe_mylocation.json()['results'][0]['asn'],
+                            ip_country=onyphe_mylocation.json()['results'][0]['country_name'],
+                            ip_countrycode=onyphe_mylocation.json()['results'][0]['country'],
+                            ip_city=onyphe_mylocation.json()['results'][0]['city'],
                             is_populated = True))
         else:
             onyphe = requests.get("https://www.onyphe.io/api/geoloc/" + row[accounts.c.ip])

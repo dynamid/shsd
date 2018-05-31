@@ -163,6 +163,7 @@ def getGeoJSON(user):
 	my_feature = []
 	s = select([accounts.c.ip_longitude,accounts.c.ip_latitude,accounts.c.ip]).where(accounts.c.login == user)
 	for row in Session.execute(s):
+		if row[accounts.c.ip_longitude] != None and row[accounts.c.ip_latitude] != None:
 			my_feature.append(geojson.Feature(geometry=geojson.Point((row[accounts.c.ip_longitude], row[accounts.c.ip_latitude])),
 			properties={
 	"marker-color": "#0000ff",

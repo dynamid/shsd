@@ -115,7 +115,7 @@ def addConnectionJSON():
 	Session.commit()
 	Session.remove()
 	#threading.Thread(target=updateIPInfo).start()
-	startBackgoundTasks()
+	#startBackgoundTasks()
 	return("JSON ok")
 
 #ajouter dynamiquement les markers sur la map

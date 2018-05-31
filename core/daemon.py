@@ -52,12 +52,18 @@ def updateIPInfo():
             else:
                 print("Rate limited on onyphe")
                 # try/catch a ajouter
-                Session.commit()
+                try:
+                    Session.commit()
+                except:
+                    Session.rollback()
                 t = threading.Timer(60 + random.randint(2,10), updateIPInfo)
                 t.daemon = True
                 t.start()
                 break
-    Session.commit()
+    try:
+        Session.commit()
+    except:
+        Session.rollback()
     Session.remove()
 
 def updateIPInfoDaemon():

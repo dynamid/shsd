@@ -118,9 +118,6 @@ def addConnectionJSON():
 	startBackgoundTasks()
 	return("JSON ok")
 
-def isLocalIP(ip):
-    return (ip.startswith("192.168.") or ip.startswith("172.16.") or ip.startswith("10.") or ip.startswith("127."))
-
 #ajouter dynamiquement les markers sur la map
 @app.route('/api/getGeoJSON/<user>')
 def getGeoJSON(user):

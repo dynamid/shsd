@@ -9,12 +9,14 @@ from flask import *
 from database import *
 
 onyphe_mylocation = None
+Session = None
 
 def isLocalIP(ip):
     return (ip.startswith("192.168.") or ip.startswith("172.16.") or ip.startswith("10.") or ip.startswith("127."))
 
 def updateIPInfo():
     print("Updating IP Info")
+    global Session
     s = select([accounts]).where(accounts.c.is_populated == False)
     for row in Session.execute(s):
         print('Updating ' + row[accounts.c.ip])
@@ -78,7 +80,9 @@ def updateIPInfoDaemon():
             pass
 
 
-def startBackgoundTasks():
+def startBackgoundTasks(mySession):
+    global Session
+    Session = mySession
     IPInfoUpdater = threading.Thread(target=updateIPInfoDaemon)
     IPInfoUpdater.daemon = True
     IPInfoUpdater.start()

@@ -35,7 +35,8 @@ accounts = Table('accounts', metadata,
     Column('is_populated', Boolean, default=False))
 
 
-engine = create_engine('sqlite:///database.db', echo=False)
-metadata.create_all(engine)
-session_factory = sessionmaker(bind=engine)
-Session = scoped_session(session_factory)
+# engine = create_engine('sqlite:///database.db', echo=False)
+# metadata.create_all(engine)
+# session_factory = sessionmaker(bind=engine)
+global Session
+Session = None #scoped_session(session_factory)

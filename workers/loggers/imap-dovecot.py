@@ -7,8 +7,6 @@ import json
 import configparser
 import argparse
 
-webappurl = "http://127.0.0.1:5000/"
-dovecotlog = "../../logs/mail.log"
 
 months = {'Jan' : '01',
         'Feb' : '02',
@@ -58,7 +56,11 @@ if __name__ == '__main__':
     config = configparser.ConfigParser()
     try:
         config.read(args.c)
-        accounts =  parselog(config['dovecot']['maillog'])
-        pushJSON(accounts,config['dovecot']['coreurl'])
+        maillog = config['dovecot']['maillog']
+        coreurl = config['dovecot']['coreurl']
     except:
         print('Cannot read config ' + args.c)
+        exit(1)
+
+    accounts =  parselog(maillog)
+    pushJSON(accounts,coreurl)

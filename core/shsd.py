@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from flask import *
 from sqlalchemy import *
 from sqlalchemy.sql import *
@@ -10,6 +12,8 @@ import time
 import geojson
 import collections
 import threading
+import configparser
+import argparse
 
 
 # local imports
@@ -157,5 +161,23 @@ def getAvgPositions():
 
 
 if __name__ == '__main__':
-	startBackgoundTasks() #url_for('populateIpInfo'))
+	parser = argparse.ArgumentParser(description='Uploads dovecot logs')
+	parser.add_argument('-c', type=str,
+	                   help='config file', default='../config.conf')
+	args = parser.parse_args()
+
+	config = configparser.ConfigParser()
+	try:
+		config.read(args.c)
+		databasef = config['core']['database']
+	except:
+		print('Cannot read config ' + args.c)
+		exit(1)
+
+	engine = create_engine(databasef, echo=False)
+	metadata.create_all(engine)
+	session_factory = sessionmaker(bind=engine)
+	Session = scoped_session(session_factory)
+
+	startBackgoundTasks(Session) #url_for('populateIpInfo'))
 	app.run(debug=False)

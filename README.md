@@ -28,7 +28,7 @@ It is aimed to be watched by the final users :
 
 * Each user should use SHSD as its default homepage (rather than a typically blank page)
 * Each user can see from where his account has been used
-* If some points are in a strange area (a foreign country for instance), user should detect this unusual pattern and then ask the hoster/forums
+* If some points are in a strange area (a foreign country or an anormal ISP for instance), user should detect this unusual pattern and then ask the hoster/forums. It may mean that the account has been used by a third-party
 * SHSD focus on the detection part, the remediation is out of our scope. We think that the global community on forums is quite efficient for remediation as soon as problems are detected.
 
 ![SHSD](doc/screenshot.png)

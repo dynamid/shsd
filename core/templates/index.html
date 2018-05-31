@@ -40,10 +40,10 @@
       var pos = {{center_map}};
       console.log(pos);
       var map = L.mapbox.map('map')
-        .setView(pos, 8)
+        .setView(pos, 5)
         .addLayer(L.mapbox.tileLayer('mapbox.streets'));
       var myLayer = L.mapbox.featureLayer().addTo(map);
-      myLayer.loadURL('http://localhost:5000/api/getGeoJSON/user1'); //charge le contenu du // '/api/geoJson/user'
+      myLayer.loadURL('http://localhost:5000/api/getGeoJSON/user2'); //charge le contenu du // '/api/geoJson/user'
 
       //------- afficher popup
       map.on('click', 'places', function(e) {

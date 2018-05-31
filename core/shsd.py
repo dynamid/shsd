@@ -66,8 +66,6 @@ def getConnections():
         #print(myaccounts)
         return myaccounts
 
-
-
 # API
 
 @app.route('/api/addDevice/<ip>/<hw>')
@@ -99,8 +97,8 @@ def addConnection(ip, user, service):
             onyphe_mylocation = requests.get("https://www.onyphe.io/api/geoloc/" + myip)
             Session.execute(accounts.insert(), [
             	{'login': user, 'ip': ip, 'firstseen': now, 'lastseen': now, 'ip_org': "LAN", 'is_populated': True,
-				 'ip_longitude': onyphe_mylocation.json()['results'][0]['longitude'],
-				 'ip_latitude': onyphe_mylocation.json()['results'][0]['latitude'],'is_populated': True}
+				'ip_longitude': onyphe_mylocation.json()['results'][0]['longitude'],
+				 'ip_latitude': onyphe_mylocation.json()['results'][0]['latitude']}
 				 ])
         else:
             onyphe = requests.get("https://www.onyphe.io/api/geoloc/" + ip)
@@ -161,16 +159,28 @@ def isLocalIP(ip):
 @app.route('/api/getGeoJSON/<user>')
 def getGeoJSON(user):
 	my_feature = []
-	s = select([accounts.c.ip_longitude,accounts.c.ip_latitude,accounts.c.ip]).where(accounts.c.login == user)
+	s = select([accounts.c.ip_longitude,accounts.c.ip_latitude,accounts.c.ip_city,accounts.c.ip]).where(accounts.c.login == user).distinct()
 	for row in Session.execute(s):
-		if row[accounts.c.ip_longitude] != None and row[accounts.c.ip_latitude] != None:
-			my_feature.append(geojson.Feature(geometry=geojson.Point((row[accounts.c.ip_longitude], row[accounts.c.ip_latitude])),
-			properties={
-	"marker-color": "#0000ff",
-	"marker-size": "medium",
-	"marker-symbol": "telephone",
-	"description": "ip is : " + row[accounts.c.ip]
-	}))
+		print(row[accounts.c.ip_city])
+		if row[accounts.c.ip_latitude] != None and row[accounts.c.ip_longitude] != None:
+			if row[accounts.c.ip_city] == 'LAN':
+				my_feature.append(geojson.Feature(geometry=geojson.Point((row[accounts.c.ip_longitude], row[accounts.c.ip_latitude])),
+				properties={
+		"marker-color": "#0000ff",
+		"marker-size": "medium",
+		"marker-symbol": "home",
+		"description": "ip is : " + row[accounts.c.ip]
+		}))
+			else :
+				my_feature.append(geojson.Feature(geometry=geojson.Point((row[accounts.c.ip_longitude], row[accounts.c.ip_latitude])),
+				properties={
+		"marker-color": "#0000ff",
+		"marker-size": "medium",
+		"marker-symbol": "telephone",
+		"description": "ip is : " + row[accounts.c.ip]
+		}))
+
+
 	mygeojson = geojson.FeatureCollection(my_feature)
 	return (geojson.dumps(mygeojson, sort_keys=True))
 

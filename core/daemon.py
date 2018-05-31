@@ -23,7 +23,7 @@ def updateIPInfo():
                 onyphe_myip = requests.get("https://www.onyphe.io/api/myip")
                 myip = onyphe_myip.json()['myip']
                 onyphe_mylocation = requests.get("https://www.onyphe.io/api/geoloc/" + myip)
-            if (onyphe_mylocation != None and onyphe_mylocation.status_code == 200 and len(onyphe.json()['results']) > 0):
+            if (onyphe_mylocation != None and onyphe_mylocation.status_code == 200 and len(onyphe_mylocation.json()['results']) > 0):
                 Session.execute(accounts.update().where(
                             and_(accounts.c.ip == row[accounts.c.ip], accounts.c.login == row[accounts.c.login])).values(
                             ip_org = "LAN",

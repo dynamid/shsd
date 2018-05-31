@@ -14,13 +14,22 @@ def isLocalIP(ip):
 
 def updateIPInfo():
     print("Updating IP Info")
+    onyphe_mylocation = None
     s = select([accounts]).where(accounts.c.is_populated == False)
     for row in Session.execute(s):
         print('Updating ' + row[accounts.c.ip])
         if (isLocalIP(row[accounts.c.ip])):
-            Session.execute(accounts.update().where(
+            if (onyphe_mylocation == None):
+                onyphe_myip = requests.get("https://www.onyphe.io/api/myip")
+                myip = onyphe_myip.json()['myip']
+                onyphe_mylocation = requests.get("https://www.onyphe.io/api/geoloc/" + myip)
+            if (onyphe_mylocation != None and onyphe_mylocation.status_code == 200 and len(onyphe.json()['results']) > 0):
+                Session.execute(accounts.update().where(
                             and_(accounts.c.ip == row[accounts.c.ip], accounts.c.login == row[accounts.c.login])).values(
                             ip_org = "LAN",
+                            ip_longitude= onyphe_mylocation.json()['results'][0]['longitude'],
+           				    ip_latitude= onyphe_mylocation.json()['results'][0]['latitude'],
+                            ip_as=onyphe_mylocation.json()['results'][0]['asn'],
                             is_populated = True))
         else:
             onyphe = requests.get("https://www.onyphe.io/api/geoloc/" + row[accounts.c.ip])
@@ -34,6 +43,7 @@ def updateIPInfo():
                                 ip_city=onyphe.json()['results'][0]['city'],
                                 ip_longitude=onyphe.json()['results'][0]['longitude'],
                                 ip_latitude=onyphe.json()['results'][0]['latitude'],
+                                ip_as=onyphe.json()['results'][0]['asn'],
                                 is_populated=True))
             else:
                 print("Rate limited on onyphe")

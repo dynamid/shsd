@@ -31,6 +31,7 @@ accounts = Table('accounts', metadata,
     Column('lastseen', Date),
     Column('ip_longitude', Float),
     Column('ip_latitude', Float),
+    Column('ip_as', String),
     Column('is_populated', Boolean, default=False))
 
 

@@ -1,9 +1,11 @@
 #!/usr/bin/python3
+#import subprocess
 
-import subprocess
 import re
 import requests
 import json
+import configparser
+import argparse
 
 webappurl = "http://127.0.0.1:5000/"
 dovecotlog = "../../logs/mail.log"
@@ -21,9 +23,9 @@ months = {'Jan' : '01',
         'Nov' : '11',
         'Dec' : '12'}
 
-def parselog():
+def parselog(maillog):
     accounts = set()#[]
-    maillog = open(dovecotlog,'r')
+    maillog = open(maillog,'r')
     for line in maillog:
         if (re.search("dovecot.*Login", line)):
             user = re.findall("user=<(.*?)>", line)[0]
@@ -41,12 +43,22 @@ def jsonify(accounts):
         res.append({'ip':newaccount[0], 'user': newaccount[1], 'month': newaccount[2], 'day': newaccount[3], 'year': '2018'})
     return(json.dumps({'service' : 'IMAP', 'connections' : res}))
 
-def pushJSON(accounts):
-    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    r = requests.post(webappurl + "api/addConnectionJSON", json=jsonify(accounts))
+def pushJSON(accounts, coreurl):
+    #print('pushing ' + str(accounts) + ' to ' + coreurl)
+    r = requests.post(coreurl + "/api/addConnectionJSON", json=jsonify(accounts))
     return
 
 
 if __name__ == '__main__':
-    accounts =  parselog()
-    pushJSON(accounts)
+    parser = argparse.ArgumentParser(description='Uploads dovecot logs')
+    parser.add_argument('-c', type=str,
+                   help='config file', default='../../config.conf')
+    args = parser.parse_args()
+
+    config = configparser.ConfigParser()
+    try:
+        config.read(args.c)
+        accounts =  parselog(config['dovecot']['maillog'])
+        pushJSON(accounts,config['dovecot']['coreurl'])
+    except:
+        print('Cannot read config ' + args.c)

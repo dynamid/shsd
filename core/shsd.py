@@ -12,8 +12,7 @@ import time
 import geojson
 import collections
 import threading
-import configparser
-import argparse
+import configparser, argparse, os
 
 
 # local imports
@@ -162,16 +161,20 @@ def getAvgPositions():
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='Uploads dovecot logs')
-	parser.add_argument('-c', type=str,
-	                   help='config file', default='../config.conf')
+	parser.add_argument('-c', type=str, help='config file')
 	args = parser.parse_args()
 
-	config = configparser.ConfigParser()
+	if args.c != None:
+		configfiles = args.c
+	else:
+		configfiles = ["/etc/shsd.conf", os.path.expanduser('~/.config/shsd.conf')]
+
 	try:
-		config.read(args.c)
+		config = configparser.ConfigParser()
+		config.read(configfiles)
 		databasef = config['core']['database']
 	except:
-		print('Cannot read config ' + args.c)
+		print('Cannot read config from ' + str(configfiles))
 		exit(1)
 
 	engine = create_engine(databasef, echo=False)

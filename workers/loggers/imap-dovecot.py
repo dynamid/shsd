@@ -4,7 +4,7 @@
 import re
 import requests
 import json
-import configparser
+import configparser,os
 import argparse
 
 
@@ -49,17 +49,21 @@ def pushJSON(accounts, coreurl):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Uploads dovecot logs')
-    parser.add_argument('-c', type=str,
-                   help='config file', default='../../config.conf')
+    parser.add_argument('-c', type=str, help='config file')
     args = parser.parse_args()
 
-    config = configparser.ConfigParser()
+    if args.c != None:
+        configfiles = args.c
+    else:
+        configfiles = ["/etc/shsd.conf", os.path.expanduser('~/.config/shsd.conf')]
+
     try:
-        config.read(args.c)
+        config = configparser.ConfigParser()
+        config.read(configfiles)
         maillog = config['dovecot']['maillog']
         coreurl = config['dovecot']['coreurl']
     except:
-        print('Cannot read config ' + args.c)
+        print('Cannot read config from ' + str(configfiles))
         exit(1)
 
     accounts =  parselog(maillog)

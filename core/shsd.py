@@ -19,17 +19,15 @@ import configparser, argparse, os
 from daemon import startBackgoundTasks, updateIPInfo
 from database import *
 
-
-now = datetime.datetime.utcnow()
-
-p = manuf.MacParser(update=False)
+p = manuf.MacParser(update=True)
 app = Flask(__name__)
+configfiles = ["/etc/shsd.conf", os.path.expanduser('~/.config/shsd.conf')]
 
 
 @app.route('/')
 @app.route('/index')
 def index():
-	return render_template('index.html', devices=getDevices(), connections=getConnections(), center_map=getAvgPositions())
+	return render_template('index.html', center_map=getAvgPositions(), geojson=url_for('getGeoJSON', user='user5'))
 
 @app.route('/details')
 def details():
@@ -160,27 +158,27 @@ def getAvgPositions():
 
 
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser(description='Uploads dovecot logs')
+	parser = argparse.ArgumentParser(description='SHSD Core')
 	parser.add_argument('-c', type=str, help='config file')
 	args = parser.parse_args()
 
 	if args.c != None:
 		configfiles = args.c
-	else:
-		configfiles = ["/etc/shsd.conf", os.path.expanduser('~/.config/shsd.conf')]
 
-	try:
-		config = configparser.ConfigParser()
-		config.read(configfiles)
-		databasef = config['core']['database']
-	except:
-		print('Cannot read config from ' + str(configfiles))
-		exit(1)
+try:
+	config = configparser.ConfigParser()
+	config.read(configfiles)
+	databasef = config['core']['database']
+except:
+	print('Cannot read config from ' + str(configfiles))
+	exit(1)
 
-	engine = create_engine(databasef, echo=False)
-	metadata.create_all(engine)
-	session_factory = sessionmaker(bind=engine)
-	Session = scoped_session(session_factory)
+engine = create_engine(databasef, echo=False)
+metadata.create_all(engine)
+session_factory = sessionmaker(bind=engine)
+Session = scoped_session(session_factory)
 
-	startBackgoundTasks(Session) #url_for('populateIpInfo'))
+startBackgoundTasks(Session) #url_for('populateIpInfo'))
+
+if __name__ == '__main__':
 	app.run(debug=False)

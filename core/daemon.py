@@ -41,7 +41,6 @@ def updateIPInfo():
         else:
             onyphe = requests.get("https://www.onyphe.io/api/geoloc/" + row[accounts.c.ip])
             if (onyphe.status_code == 200 and len(onyphe.json()['results']) > 0):
-                print(onyphe.json()['results'][0]['organization'])
                 Session.execute(accounts.update().where(
                         and_(accounts.c.ip == row[accounts.c.ip], accounts.c.login == row[accounts.c.login])).values(
                                 ip_org=onyphe.json()['results'][0]['organization'],

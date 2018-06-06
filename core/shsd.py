@@ -13,13 +13,14 @@ import geojson
 import collections
 import threading
 import configparser, argparse, os
+import GeoIP
 
 
 # local imports
-from daemon import startBackgoundTasks, updateIPInfo
+from daemon import startBackgoundTasks, updateIPInfo, isLocalIP
 from database import *
 
-p = manuf.MacParser(update=True)
+p = manuf.MacParser(update=False)
 app = Flask(__name__)
 configfiles = ["/etc/shsd.conf", os.path.expanduser('~/.config/shsd.conf')]
 
@@ -63,6 +64,7 @@ def getConnections():
 				'firstseen' : row[accounts.c.firstseen],
                                 'lastseen' : row[accounts.c.lastseen],
                                 'ip_org' : row[accounts.c.ip_org],
+								'ip_as' : row[accounts.c.ip_as],
                                 'ip_city' : row[accounts.c.ip_city]})
         #print(myaccounts)
         return myaccounts
@@ -84,8 +86,6 @@ def addDevice(ip, hw):
     Session.remove()
     return ("device added : " + hw)
 
-
-
 @app.route('/api/addConnectionJSON', methods=['POST'])
 def addConnectionJSON():
 	if not request.json:
@@ -101,8 +101,39 @@ def addConnectionJSON():
 		               accounts.c.ip == ip, accounts.c.login == user)).count()
 		known = Session.execute(s).scalar()
 		if (known == 0):
-			Session.execute(accounts.insert(), [
-		                {'login': user, 'ip': ip, 'firstseen': date, 'lastseen': date, 'is_populated': False}
+			if (geoloc == 'onyphe'):
+				Session.execute(accounts.insert(), [
+		                	{'login': user, 'ip': ip, 'firstseen': date, 'lastseen': date, 'is_populated': False}
+		           ])
+			elif (geoloc == 'geoip'):
+				# print('adding ' + ip)
+				if (isLocalIP(ip)):
+					new_as = "LAN"
+					new_org = "LAN"
+					new_geoloc = geoip_loc.record_by_addr(myip)
+				else:
+					tmp = geoip_as.org_by_addr(ip).split()
+					new_as = tmp[0]
+					new_org = " ".join(tmp[1:])
+					new_geoloc = geoip_loc.record_by_addr(ip)
+				if (new_as != None and new_geoloc != None):
+					# print ("" + str(new_as) + str(new_geoloc))
+					Session.execute(accounts.insert(), [
+							{'login': user, 'ip': ip, 'firstseen': date, 'lastseen': date, 'is_populated': True,
+							 'ip_org' : new_org, 'ip_country':new_geoloc['country_name'],
+							 'ip_countrycode':new_geoloc['country_code'], 'ip_city':new_geoloc['city'],
+							 'ip_longitude':new_geoloc['longitude'], 'ip_latitude':new_geoloc['latitude'],
+							 'ip_as':new_as}
+   						])
+				else:
+					print("no geoip entry for " + ip + ", failing back to onyphe")
+					Session.execute(accounts.insert(), [
+				               	{'login': user, 'ip': ip, 'firstseen': date, 'lastseen': date, 'is_populated': False}
+				         ])
+			else:
+				print('no geoloc')
+				Session.execute(accounts.insert(), [
+		                	{'login': user, 'ip': ip, 'firstseen': date, 'lastseen': date, 'is_populated': True}
 		           ])
 		else:
 			s = select([accounts.c.login, accounts.c.ip, accounts.c.lastseen]).where(and_(
@@ -111,7 +142,10 @@ def addConnectionJSON():
 				olddate = row[accounts.c.lastseen]
 				if (date > olddate):
 					Session.execute(accounts.update().where(and_(accounts.c.ip == ip, accounts.c.login == user)).values(lastseen=date))
-	Session.commit()
+	try:
+		Session.commit()
+	except:
+		Session.rollback()
 	Session.remove()
 	#threading.Thread(target=updateIPInfo).start()
 	#startBackgoundTasks()
@@ -169,6 +203,15 @@ try:
 	config = configparser.ConfigParser()
 	config.read(configfiles)
 	databasef = config['core']['database']
+	geoloc = config['core']['geoloc']
+	if (geoloc == 'geoip'):
+		geoipdb = config['core']['geoipdb']
+		try:
+			geoip_loc = GeoIP.open(geoipdb + "GeoIPCity.dat", GeoIP.GEOIP_STANDARD)
+			geoip_as = GeoIP.open(geoipdb + "GeoIPASNum.dat", GeoIP.GEOIP_STANDARD)
+		except:
+			print('Cannot open GeoIP database. Did you install it ? (apt-get install geoip-database-contrib)')
+			exit(1)
 except:
 	print('Cannot read config from ' + str(configfiles))
 	exit(1)
@@ -177,6 +220,9 @@ engine = create_engine(databasef, echo=False)
 metadata.create_all(engine)
 session_factory = sessionmaker(bind=engine)
 Session = scoped_session(session_factory)
+
+myip = requests.get('https://api.ipify.org').text
+print('my ip is ' + myip)
 
 startBackgoundTasks(Session) #url_for('populateIpInfo'))
 

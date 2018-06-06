@@ -207,8 +207,8 @@ try:
 	if (geoloc == 'geoip'):
 		geoipdb = config['core']['geoipdb']
 		try:
-			geoip_loc = GeoIP.open(geoipdb + "GeoIPCity.dat", GeoIP.GEOIP_STANDARD)
-			geoip_as = GeoIP.open(geoipdb + "GeoIPASNum.dat", GeoIP.GEOIP_STANDARD)
+			geoip_loc = GeoIP.open(geoipdb + "/GeoIPCity.dat", GeoIP.GEOIP_STANDARD)
+			geoip_as = GeoIP.open(geoipdb + "/GeoIPASNum.dat", GeoIP.GEOIP_STANDARD)
 		except:
 			print('Cannot open GeoIP database. Did you install it ? (apt-get install geoip-database-contrib)')
 			exit(1)

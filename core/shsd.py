@@ -125,7 +125,7 @@ def addConnectionJSON():
 							 'ip_longitude':new_geoloc['longitude'], 'ip_latitude':new_geoloc['latitude'],
 							 'ip_as':new_as}
    						])
-				else:
+				else:   # failed to find an entry in the local geoip, failing back to onyphe
 					print("no geoip entry for " + ip + ", failing back to onyphe")
 					Session.execute(accounts.insert(), [
 				               	{'login': user, 'ip': ip, 'firstseen': date, 'lastseen': date, 'is_populated': False}

@@ -63,17 +63,17 @@ header{
   right: 10px;
 
 }
-ul {
+ul.menu {
  padding:0;
  margin:0;
  list-style-type:none;
  }
-li {
+li.menu {
  margin-left:2px;
  float:left;
  border-right:1px solid #bbb;
  }
- li:last-child {
+ li:last-child.menu {
     border-right: none;
 }
 

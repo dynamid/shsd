@@ -9,12 +9,14 @@ from flask import *
 from database import *
 
 onyphe_mylocation = None
+Session = None
 
 def isLocalIP(ip):
     return (ip.startswith("192.168.") or ip.startswith("172.16.") or ip.startswith("10.") or ip.startswith("127."))
 
 def updateIPInfo():
     print("Updating IP Info")
+    global Session
     s = select([accounts]).where(accounts.c.is_populated == False)
     for row in Session.execute(s):
         print('Updating ' + row[accounts.c.ip])
@@ -39,7 +41,6 @@ def updateIPInfo():
         else:
             onyphe = requests.get("https://www.onyphe.io/api/geoloc/" + row[accounts.c.ip])
             if (onyphe.status_code == 200 and len(onyphe.json()['results']) > 0):
-                print(onyphe.json()['results'][0]['organization'])
                 Session.execute(accounts.update().where(
                         and_(accounts.c.ip == row[accounts.c.ip], accounts.c.login == row[accounts.c.login])).values(
                                 ip_org=onyphe.json()['results'][0]['organization'],
@@ -78,7 +79,9 @@ def updateIPInfoDaemon():
             pass
 
 
-def startBackgoundTasks():
+def startBackgoundTasks(mySession):
+    global Session
+    Session = mySession
     IPInfoUpdater = threading.Thread(target=updateIPInfoDaemon)
     IPInfoUpdater.daemon = True
     IPInfoUpdater.start()

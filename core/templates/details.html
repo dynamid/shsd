@@ -39,13 +39,14 @@ No device detected
 <div>
 <h2>Accounts used</h2>
 <table class="pure-table">
-<thead><tr><th>Account</th><th>Device</th><th>FAI</th><th>City</th>
+<thead><tr><th>Account</th><th>Device</th><th>FAI</th><th>AS</th><th>City</th>
 <th>First seen</th><th>Last seen</th></tr></thead>
 {% for row in connections %}
     <tr>
       <td>{{ row['user'] }}</td>
       <td>{{ row['ip'] }}</td>
       <td>{{ row['ip_org'] }}</td>
+      <td>{{ row['ip_as'] }}</td>
       <td>{{ row['ip_city'] }}</td>
       <td>{{ row['firstseen'] }}</td>
       <td>{{ row['lastseen'] }}</td>

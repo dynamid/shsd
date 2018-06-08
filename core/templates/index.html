@@ -19,10 +19,10 @@
   <header>
     <div class="navigation-bar">
       <div id="navigation-container">
-        <img src="../static/logo.png" alt="shsd" href="index.html">
-        <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
+        <a href="#"><img src="../static/logo.png" alt="shsd" href="index.html"></a>
+        <ul class="menu">
+          <li class="menu"><a href="#">Home</a></li>
+          <li class="menu"><a href="../static/about.html">About</a></li>
         </ul>
       </div>
     </div>
@@ -42,7 +42,11 @@
         .setView(pos, 5)
         .addLayer(L.mapbox.tileLayer('mapbox.streets'));
       var myLayer = L.mapbox.featureLayer().addTo(map);
+<<<<<<< HEAD
       myLayer.loadURL('http://localhost:5000/api/getGeoJSON/user5'); //charge le contenu du // '/api/geoJson/user'
+=======
+      myLayer.loadURL('{{geojson}}'); //charge le contenu du // '/api/geoJson/user'
+>>>>>>> 72b91e8e913f695853eef2005e69c1482842453b
 
       //------- afficher popup
       map.on('click', 'places', function(e) {

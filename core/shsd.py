@@ -132,22 +132,7 @@ def getGeoJSON(user):
 
 	for row in Session.execute(s):
 # couleur des markers selon AS
-		if len(as_list) ==0:# Premier AS dans la liste
-			as_list.append(row[4])#ajoute une nouvelle couleur à la liste à l'indice row
-			as_color = newColor()
-			org_aslist.append(row[2])#ajoute un nouveau nom d'AS à la liste à l'indice row
-		for i in range(len(as_list)): #on parcourt la liste pour savoir si on y ajoute ou pas l'as
-			if(row[4] == as_list[i]): #on sort de la boucle
-				is_in_aslist = True
-				as_index = i #récupère son indice dans le tableu
-				break
-		if is_in_aslist == False: #s'il n'y est pas, on l'ajoute à la liste et on lui crée une nouvelle couleur
-			as_list.append(row[4])
-			as_color = newColor()
-			org_aslist.append(row[2])
-		else: #s'il y est on récupère sa couleur
-			as_color = color_aslist[as_index]
-			is_in_aslist = False
+
 #Taille des markers selon la durée de présence dans la base
 		if row[accounts.c.ip_org] == "LAN":
 			print("LAAAAN")

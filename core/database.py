@@ -34,6 +34,12 @@ accounts = Table('accounts', metadata,
     Column('ip_as', String),
     Column('is_populated', Boolean, default=False))
 
+ascolors = Table('ascolors', metadata,
+    Column('id_color', Integer, autoincrement=True, primary_key=True),
+    Column('uid', String),
+    Column('as', String),
+    Column('color', String))
+
 
 engine = create_engine('sqlite:///database.db', echo=False)
 metadata.create_all(engine)

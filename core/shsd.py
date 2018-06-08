@@ -10,6 +10,7 @@ import time
 import geojson
 import collections
 import threading
+from random import *
 
 
 # local imports
@@ -26,7 +27,8 @@ app = Flask(__name__)
 @app.route('/')
 @app.route('/index')
 def index():
-	return render_template('index.html', devices=getDevices(), connections=getConnections(), center_map=getAvgPositions())
+	return render_template('index.html', devices=getDevices(), connections=getConnections(), center_map=getAvgPositions(),
+	colors = color_aslist, orgs = org_aslist)
 
 @app.route('/details')
 def details():
@@ -120,29 +122,60 @@ def addConnectionJSON():
 @app.route('/api/getGeoJSON/<user>')
 def getGeoJSON(user):
 	my_feature = []
-	s = select([accounts.c.ip_longitude,accounts.c.ip_latitude,accounts.c.ip_city,accounts.c.ip]).where(accounts.c.login == user).distinct()
+	s = select([accounts.c.ip_longitude,accounts.c.ip_latitude,
+	accounts.c.ip_org,accounts.c.ip,accounts.c.ip_as]).where(accounts.c.login == user).distinct()
+	as_list = []
+	is_in_aslist = False
+	as_index = 0
+	as_color = 0
+	as_org = ' '
+
 	for row in Session.execute(s):
-		print(row[accounts.c.ip_city])
-		if row[accounts.c.ip_latitude] != None and row[accounts.c.ip_longitude] != None:
-			if row[accounts.c.ip_city] == 'LAN':
-				my_feature.append(geojson.Feature(geometry=geojson.Point((row[accounts.c.ip_longitude], row[accounts.c.ip_latitude])),
+# couleur des markers selon AS
+		if len(as_list) ==0:# Premier AS dans la liste
+			as_list.append(row[4])#ajoute une nouvelle couleur à la liste à l'indice row
+			as_color = newColor()
+			org_aslist.append(row[2])#ajoute un nouveau nom d'AS à la liste à l'indice row
+		for i in range(len(as_list)): #on parcourt la liste pour savoir si on y ajoute ou pas l'as
+			if(row[4] == as_list[i]): #on sort de la boucle
+				is_in_aslist = True
+				as_index = i #récupère son indice dans le tableu
+				break
+		if is_in_aslist == False: #s'il n'y est pas, on l'ajoute à la liste et on lui crée une nouvelle couleur
+			as_list.append(row[4])
+			as_color = newColor()
+			org_aslist.append(row[2])
+		else: #s'il y est on récupère sa couleur
+			as_color = color_aslist[as_index]
+			is_in_aslist = False
+#Taille des markers selon la durée de présence dans la base
+		if row[accounts.c.ip_org] == "LAN":
+			print("LAAAAN")
+			my_feature.append(geojson.Feature(geometry=geojson.Point((row[accounts.c.ip_longitude],
+			row[accounts.c.ip_latitude])),
 				properties={
-		"marker-color": "#0000ff",
+		"marker-color": as_color,
 		"marker-size": "medium",
-		"marker-symbol": "home",
-		"description": "ip is : " + row[accounts.c.ip]
-		}))
-			else :
-				my_feature.append(geojson.Feature(geometry=geojson.Point((row[accounts.c.ip_longitude], row[accounts.c.ip_latitude])),
-				properties={
-		"marker-color": "#0000ff",
-		"marker-size": "medium",
-		"marker-symbol": "telephone",
-		"description": "ip is : " + row[accounts.c.ip]
+		"marker-symbol": "village",
+		"description": "ip LAN is : " + row[accounts.c.ip]
 		}))
 
+		else :
+			my_feature.append(geojson.Feature(geometry=geojson.Point((row[accounts.c.ip_longitude],
+			row[accounts.c.ip_latitude])),
+			properties={
+		"marker-color": as_color,
+		"marker-size": "medium",
+		"marker-symbol": "marker",
+		"description": "ip is : " + row[accounts.c.ip] + " org : " + row[2]
+		}))
+
+	print(org_aslist)
+	print(as_list)
+	print(color_aslist)
 
 	mygeojson = geojson.FeatureCollection(my_feature)
+
 	return (geojson.dumps(mygeojson, sort_keys=True))
 
 #moyenne des latitude et longitude
@@ -154,6 +187,22 @@ def getAvgPositions():
 		pos.append(row[1])
 
 	return pos
+
+color_aslist = ["#ff0000","#fff700","#1ffd00","#0307fd","#fc03b8","#fc5202","#01fcb4","#9603fc","#ff026a","#ca9d03"]
+org_aslist = []
+#Générer une nouvelle couleur
+# def newColor():
+#     hexa = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f']
+#     col = sample(hexa,6)
+#     for i in color_aslist: #on vérifie que la couleur n'est pas déjà attribuée
+#         if col == i:
+#             col = sample(hexa,6)
+#
+#     color1 = ''.join(col)
+#     prefix = '#'
+#     color = prefix+color1
+#     color_aslist.append(color)
+#     return color
 
 
 if __name__ == '__main__':

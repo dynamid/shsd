@@ -30,7 +30,6 @@
 
   <br>
   <br>
-
   <div id='map'>
     <br>
     <script>
@@ -43,7 +42,7 @@
         .setView(pos, 5)
         .addLayer(L.mapbox.tileLayer('mapbox.streets'));
       var myLayer = L.mapbox.featureLayer().addTo(map);
-      myLayer.loadURL('http://localhost:5000/api/getGeoJSON/user2'); //charge le contenu du // '/api/geoJson/user'
+      myLayer.loadURL('http://localhost:5000/api/getGeoJSON/user5'); //charge le contenu du // '/api/geoJson/user'
 
       //------- afficher popup
       map.on('click', 'places', function(e) {
@@ -68,8 +67,25 @@
         map.getCanvas().style.cursor = '';
       });
 
+      //------- Créer la légende à ajouter
+      var legend = document.createElement('div');
+      legend.id = 'legend';
+      var table = document.createElement('table');
+      table.id = 'table'
+/*
+      function addKid(){
+        console.log("youuuhouuu");
+        {%for org in orgs%}
+          var newRow = document.createElement('tr');
+          newRow.innerHTML = '<td>'org'</td><td></td>';
+          document.getElementById('table').appendChild(newRow);
+        {% endfor %}
+      }
+      var bouya = addKid();
+      legend.appendChild(bouya);
+*/
       //------- Ajouter une légende à la map
-      map.legendControl.addLegend('<strong>View of my logs</strong>');
+      //map.legendControl.addLegend(document.getElementById('legend').innerHTML);
 
     </script>
   </div>

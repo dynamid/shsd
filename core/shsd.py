@@ -176,7 +176,7 @@ def getASColor(asn, user):  # return the color and creates it if needed
 		id = colorAs(user)
 		as_color = as_colorlist[id]
 		Session.execute(ascolors.insert(), [
-					{'id_color': id, 'uid': user, 'ip_as': asn, 'color': as_color}
+					{'id_color': id, 'uid': user, 'ip_as': asn} #, 'color': as_color}
 		   ])
 	return as_color
 

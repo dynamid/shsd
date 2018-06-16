@@ -49,3 +49,7 @@ Notably, exists :
 SHSD aims to provide value to self-hosters who are not security experts. To achieve this, SHSD leverages specific knowledge and insights a self-hoster may have about his own devices or the few hosted guest accounts.
 
 SHSD does not feature any AI nor precog features.
+
+# Install notes
+
+Install notes are provided in [INSTALL.md](INSTALL.md)

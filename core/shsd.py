@@ -4,7 +4,7 @@ from flask import *
 from sqlalchemy import *
 from sqlalchemy.sql import *
 from sqlalchemy.orm import scoped_session, sessionmaker
-from manuf import manuf
+#from manuf import manuf
 import datetime
 import re
 import requests
@@ -21,7 +21,7 @@ import GeoIP
 from daemon import startBackgoundTasks, updateIPInfo, isLocalIP
 from database import *
 
-p = manuf.MacParser(update=False)
+#p = manuf.MacParser(update=False)
 app = Flask(__name__)
 configfiles = ["/etc/shsd.conf", os.path.expanduser('~/.config/shsd.conf')]
 

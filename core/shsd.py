@@ -25,12 +25,14 @@ from database import *
 app = Flask(__name__)
 configfiles = ["/etc/shsd.conf", os.path.expanduser('~/.config/shsd.conf')]
 
+def getCurrentUser():
+	return "user5"
 
 @app.route('/')
 @app.route('/index')
 def index():
-	return render_template('index.html', center_map=getAvgPositions(), geojson=url_for('getGeoJSON', user='user5'),
-	colors_to_print=getColorsFromDB('user5'))
+	return render_template('index.html', center_map=getAvgPositions(getCurrentUser()), geojson=url_for('getGeoJSON', user=getCurrentUser()),
+	colors_to_print=getColorsFromDB(getCurrentUser()))
 
 @app.route('/details')
 def details():
@@ -231,17 +233,17 @@ def getGeoJSON(user):
 	return (geojson.dumps(mygeojson, sort_keys=True))
 
 #moyenne des latitude et longitude
-def getAvgPositions():
+def getAvgPositions(user):
 	pos = []
 	delta_lat = []
 	delta_long = []
 #point central
-	min = select([func.min(accounts.c.ip_latitude),func.min(accounts.c.ip_longitude)]).distinct()
+	min = select([func.min(accounts.c.ip_latitude),func.min(accounts.c.ip_longitude)]).where(accounts.c.login == user).distinct()
 	for row in Session.execute(min):
 		pos.append(row[0])
 		pos.append(row[1])
 
-	max = select([func.max(accounts.c.ip_latitude),func.max(accounts.c.ip_longitude)]).distinct()
+	max = select([func.max(accounts.c.ip_latitude),func.max(accounts.c.ip_longitude)]).where(accounts.c.login == user).distinct()
 	for row in Session.execute(max):
 		pos.append(row[0])
 		pos.append(row[1])

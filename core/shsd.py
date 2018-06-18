@@ -26,7 +26,8 @@ app = Flask(__name__)
 configfiles = ["/etc/shsd.conf", os.path.expanduser('~/.config/shsd.conf')]
 
 def getCurrentUser():
-	return "user5"
+	user = request.args.get("user", "user5")
+	return user
 
 @app.route('/')
 @app.route('/index')

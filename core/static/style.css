@@ -1,20 +1,70 @@
-body {
+header{
+  color : white;
+  background-color: #11426f;
+
+  position:  fixed;
+  padding-top: 15px;
+  padding-right: 1200px;
+  padding-bottom: 15px;
+  padding-left: 50px;
+
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 10000;
+}
+.navigation-bar ul {
+  padding: 0px;
+  margin: 0px;
+  text-align: center;
+  display:inline-block;
+  vertical-align:top;
+
+  position:  fixed;
+  top : 30px;
+  right: 10px;
+
+}
+ul.menu {
+ padding:0;
+ margin:0;
+ list-style-type:none;
+ }
+li.menu {
+  position : relative;
+ margin-left:2px;
+ float:left;
+ border-right:1px solid #bbb;
+ }
+ li:last-child.menu {
+    border-right: none;
 }
 
-a {
-  color: #028;
+ul li a {
+ display:block;
+ float:left;
+ width:100px;
+ background-color:#11426f;
+ color:white;
+ text-align:center;
+ padding:5px;
+ text-decoration: none;
+ }
+ul li a:hover {
+ background-color:none;
+ border-color:#696969 #DCDCDC #DCDCDC #696969;
+ }
+ li a:hover:not(.active) {
+    background-color: #003366;
+}
+.active {
+    background-color: #4CAF50;
+}
+#logo img {
+max-width: 100%;
+height: auto;
 }
 
-.legend label,
-.legend span {
-  /*display:block;*/
-  float:left;
-  height:15px;
-  width:20%;
-  text-align:center;
-  font-size:9px;
-  color:#808080;
-  }
 #map {
     position:relative;
     left: 650px;
@@ -64,68 +114,6 @@ a {
     border-radius: 50%;
     cursor: pointer;
     padding: 0;
-}
-
-header{
-  color : white;
-  background-color: #11426f;
-
-  position:  fixed;
-  padding-top: 15px;
-  padding-right: 1200px;
-  padding-bottom: 15px;
-  padding-left: 50px;
-
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  z-index: 10000;
-}
-.navigation-bar ul {
-  padding: 0px;
-  margin: 0px;
-  text-align: center;
-  display:inline-block;
-  vertical-align:top;
-
-  position:  fixed;
-  top : 30px;
-  right: 10px;
-
-}
-ul.menu {
- padding:0;
- margin:0;
- list-style-type:none;
- }
-li.menu {
- margin-left:2px;
- float:left;
- border-right:1px solid #bbb;
- }
- li:last-child.menu {
-    border-right: none;
-}
-
-ul li a {
- display:block;
- float:left;
- width:100px;
- background-color:#11426f;
- color:white;
- text-align:center;
- padding:5px;
- text-decoration: none;
- }
-ul li a:hover {
- background-color:none;
- border-color:#696969 #DCDCDC #DCDCDC #696969;
- }
- li a:hover:not(.active) {
-    background-color: #003366;
-}
-.active {
-    background-color: #4CAF50;
 }
 
 

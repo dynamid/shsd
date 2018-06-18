@@ -155,7 +155,7 @@ def addConnectionJSON():
 	#startBackgoundTasks()
 	return("JSON ok")
 #-----------------------MARKERS COLORS
-as_colorlist = ["#FE0000","#FD0065","#D300FD","#5C00FA","#002AFA","#00A7FA","#00FA00","#FAE900","#FA7500","#00FAD0"]
+as_colorlist = ["#FE0000","#FD0065","#00FAD0","#5C00FA","#002AFA","#00A7FA","#00FA00","#FAE900","#FA7500","#D300FD"]
 def colorAs(user):
 	c = select([ascolors.c.id_color]).where(ascolors.c.uid == user).distinct().count()
 	nb_colors = Session.execute(c).scalar()
@@ -176,7 +176,10 @@ def getASColor(asn, user):  # return the color and creates it if needed
 
 	else:#s'il n'existe pas, alors on crée une ligne dans la table ascolors
 		id = colorAs(user)
-		as_color = as_colorlist[id]
+		if id > 10 : # le cas où toutes les couleurs de la table son utilisées
+			as_color = "000000"
+		else:
+			as_color = as_colorlist[id]
 		Session.execute(ascolors.insert(), [
 					{'id_color': id, 'uid': user, 'ip_as': asn} #, 'color': as_color}
 		   ])
@@ -184,9 +187,7 @@ def getASColor(asn, user):  # return the color and creates it if needed
 
 def getColorsFromDB(user):
 	c = select([ascolors.c.id_color, ascolors.c.ip_as]).where(ascolors.c.uid == user)
-
 	col = []
-
 	for row in Session.execute(c):
 		s = select([accounts.c.ip_org]).where(and_(accounts.c.login == user,accounts.c.ip_as == row[ascolors.c.ip_as])).distinct()
 		for i in Session.execute(s):
@@ -196,8 +197,19 @@ def getColorsFromDB(user):
 			col.append(color)
 	legend = {'legend' : col}
 	json_data = json.dumps(legend)
-	print(json_data)
 	return json_data
+#-----------------------MARKERS SIZE
+def markerSize(first,last):
+	delta = last - first
+	size = "small"
+	if delta.days < 6 and last.month == first.month : #s'il y a moins de 5 jours d'écart entre la première et la dernière connexion
+		size = "large"
+	elif delta.days > 5 and delta.days < 10 and last.month == first.month:
+		size = "medium"
+	else:
+		size = "small"
+	return size
+
 
 #ajouter dynamiquement les markers sur la map
 @app.route('/api/getGeoJSON/<user>')
@@ -209,14 +221,14 @@ def getGeoJSON(user):
 
 	for row in Session.execute(s):
 		as_color = getASColor(row[accounts.c.ip_as],row[accounts.c.login])
+		size = markerSize(row[accounts.c.firstseen],row[accounts.c.lastseen])
 
-		print(row[accounts.c.ip_city])
 		if row[accounts.c.ip_latitude] != None and row[accounts.c.ip_longitude] != None:
 			if row[accounts.c.ip_city] == 'LAN':
 				my_feature.append(geojson.Feature(geometry=geojson.Point((row[accounts.c.ip_longitude], row[accounts.c.ip_latitude])),
 				properties={
 		"marker-color": as_color,
-		"marker-size": "medium",
+		"marker-size": size,
 		"marker-symbol": "home",
 		"description": "ip is : " + row[accounts.c.ip] + " | Org : " + row[accounts.c.ip_org] + " | Firstseen : "+str(row[accounts.c.firstseen]) + " | Lastseen : " + str(row[accounts.c.lastseen])
 		}))
@@ -224,7 +236,7 @@ def getGeoJSON(user):
 				my_feature.append(geojson.Feature(geometry=geojson.Point((row[accounts.c.ip_longitude], row[accounts.c.ip_latitude])),
 				properties={
 		"marker-color": as_color,
-		"marker-size": "medium",
+		"marker-size": size,
 		"marker-symbol": "telephone",
 		"description": "ip is : " + row[accounts.c.ip] + " | Org : " + row[accounts.c.ip_org]+ " | Firstseen : "+str(row[accounts.c.firstseen]) + " | Fastseen : " + str(row[accounts.c.lastseen])
 		}))

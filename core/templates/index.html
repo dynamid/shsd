@@ -71,25 +71,7 @@
       //------- Créer la légende à ajouter
       var legend = document.createElement("div");
       var colors = {{colors_to_print | tojson}};
-      var lo = colors.split('},');
-      console.log(lo);
-      ret = [];
-      tab_color = [];
-      tab_asn = [];
-      for (i = 0; i < lo.length; i++) {
-        var a = lo[i].replace(/\"/gi, "");
-        var b = a.replace(/{asn:/gi, "");
-        var c = b.replace(/\[/gi, "");
-        var d = c.replace(/}]/gi, "");
-        var e = d.replace(/color:/gi, "");
-        ret.push(e); //tableau cohérent avec données utilisables
-        index = ret[i].indexOf(",");
-        as = ret[i].substr(0, index) // string contenant l'as uniquement
-        tab_asn.push(as);
-        col = ret[i].substr(index + 1); // string contenant la couleur uniquement
-        tab_color.push(col);
-      }
-      console.log(tab_color);
+      var colors_json = JSON.parse(colors);
 
       //-----------ADD LEGEND
       var xmlns = "http://www.w3.org/2000/svg";
@@ -102,10 +84,10 @@
         var legend = document.createElement('div')
         legend.id = "legend";
         legend.height = 100;
-        for (i = 0; i < tab_color.length; i++) {
+        for (i = 0; i < colors_json.legend.length; i++) {
           var elt = document.createElement('div');
           var value = document.createElement('span');
-          value.innerHTML = tab_asn[i];
+          value.innerHTML = colors_json.legend[i].asn;
 
           var svg = document.createElementNS(xmlns, 'svg');
           svg.setAttributeNS(null, "width", 20);
@@ -116,7 +98,7 @@
           rect.setAttributeNS(null, "y", 0);
           rect.setAttributeNS(null, "width", 50);
           rect.setAttributeNS(null, "height", 50);
-          rect.setAttributeNS(null, "fill", tab_color[i]);
+          rect.setAttributeNS(null, "fill", colors_json.legend[i].color);
 
           svg.appendChild(rect);
           elt.appendChild(svg);

@@ -4,7 +4,7 @@ from flask import *
 from sqlalchemy import *
 from sqlalchemy.sql import *
 from sqlalchemy.orm import scoped_session, sessionmaker
-from manuf import manuf
+#from manuf import manuf
 import datetime
 import re
 import requests
@@ -21,16 +21,18 @@ import GeoIP
 from daemon import startBackgoundTasks, updateIPInfo, isLocalIP
 from database import *
 
-p = manuf.MacParser(update=False)
+#p = manuf.MacParser(update=False)
 app = Flask(__name__)
 configfiles = ["/etc/shsd.conf", os.path.expanduser('~/.config/shsd.conf')]
 
+def getCurrentUser():
+	return "user5"
 
 @app.route('/')
 @app.route('/index')
 def index():
-	return render_template('index.html', center_map=getAvgPositions(), geojson=url_for('getGeoJSON', user='user5'),
-	colors_to_print=getColorsFromDB('user5'))
+	return render_template('index.html', center_map=getAvgPositions(getCurrentUser()), geojson=url_for('getGeoJSON', user=getCurrentUser()),
+	colors_to_print=getColorsFromDB(getCurrentUser()))
 
 @app.route('/details')
 def details():
@@ -176,7 +178,7 @@ def getASColor(asn, user):  # return the color and creates it if needed
 		id = colorAs(user)
 		as_color = as_colorlist[id]
 		Session.execute(ascolors.insert(), [
-					{'id_color': id, 'uid': user, 'ip_as': asn, 'color': as_color}
+					{'id_color': id, 'uid': user, 'ip_as': asn} #, 'color': as_color}
 		   ])
 	return as_color
 
@@ -192,7 +194,8 @@ def getColorsFromDB(user):
 			color['asn'] = i[accounts.c.ip_org]
 			color['color'] = as_colorlist[row[ascolors.c.id_color]]
 			col.append(color)
-	json_data = json.dumps(col)
+	legend = {'legend' : col}
+	json_data = json.dumps(legend)
 	print(json_data)
 	return json_data
 
@@ -200,8 +203,9 @@ def getColorsFromDB(user):
 @app.route('/api/getGeoJSON/<user>')
 def getGeoJSON(user):
 	my_feature = []
+
 	s = select([accounts.c.ip_longitude,accounts.c.ip_latitude,accounts.c.ip_city,accounts.c.ip,
-	accounts.c.ip_org, accounts.c.ip_as,accounts.c.login]).where(accounts.c.login == user).distinct()
+	accounts.c.ip_org, accounts.c.ip_as,accounts.c.login, accounts.c.firstseen, accounts.c.lastseen]).where(accounts.c.login == user).distinct()
 
 	for row in Session.execute(s):
 		as_color = getASColor(row[accounts.c.ip_as],row[accounts.c.login])
@@ -214,7 +218,7 @@ def getGeoJSON(user):
 		"marker-color": as_color,
 		"marker-size": "medium",
 		"marker-symbol": "home",
-		"description": "ip is : " + row[accounts.c.ip]+ "org : " + row[accounts.c.ip_org]
+		"description": "ip is : " + row[accounts.c.ip] + " | Org : " + row[accounts.c.ip_org] + " | Firstseen : "+str(row[accounts.c.firstseen]) + " | Lastseen : " + str(row[accounts.c.lastseen])
 		}))
 			else :
 				my_feature.append(geojson.Feature(geometry=geojson.Point((row[accounts.c.ip_longitude], row[accounts.c.ip_latitude])),
@@ -222,7 +226,7 @@ def getGeoJSON(user):
 		"marker-color": as_color,
 		"marker-size": "medium",
 		"marker-symbol": "telephone",
-		"description": "ip is : " + row[accounts.c.ip] + "org : " + row[accounts.c.ip_org]
+		"description": "ip is : " + row[accounts.c.ip] + " | Org : " + row[accounts.c.ip_org]+ " | Firstseen : "+str(row[accounts.c.firstseen]) + " | Fastseen : " + str(row[accounts.c.lastseen])
 		}))
 
 	Session.commit()
@@ -231,17 +235,17 @@ def getGeoJSON(user):
 	return (geojson.dumps(mygeojson, sort_keys=True))
 
 #moyenne des latitude et longitude
-def getAvgPositions():
+def getAvgPositions(user):
 	pos = []
 	delta_lat = []
 	delta_long = []
 #point central
-	min = select([func.min(accounts.c.ip_latitude),func.min(accounts.c.ip_longitude)]).distinct()
+	min = select([func.min(accounts.c.ip_latitude),func.min(accounts.c.ip_longitude)]).where(accounts.c.login == user).distinct()
 	for row in Session.execute(min):
 		pos.append(row[0])
 		pos.append(row[1])
 
-	max = select([func.max(accounts.c.ip_latitude),func.max(accounts.c.ip_longitude)]).distinct()
+	max = select([func.max(accounts.c.ip_latitude),func.max(accounts.c.ip_longitude)]).where(accounts.c.login == user).distinct()
 	for row in Session.execute(max):
 		pos.append(row[0])
 		pos.append(row[1])

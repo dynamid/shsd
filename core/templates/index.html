@@ -89,7 +89,7 @@
           var value = document.createElement('span');
           value.innerHTML = colors_json.legend[i].asn;
 
-          var svg = document.createElementNS(xmlns, 'svg');
+/*          var svg = document.createElementNS(xmlns, 'svg');
           svg.setAttributeNS(null, "width", 20);
           svg.setAttributeNS(null, "height", 20);
 
@@ -98,10 +98,14 @@
           rect.setAttributeNS(null, "y", 0);
           rect.setAttributeNS(null, "width", 50);
           rect.setAttributeNS(null, "height", 50);
-          rect.setAttributeNS(null, "fill", colors_json.legend[i].color);
+          rect.setAttributeNS(null, "fill", colors_json.legend[i].color); */
 
-          svg.appendChild(rect);
-          elt.appendChild(svg);
+          var key = document.createElement('span');
+          key.className = 'legend-key';
+          key.style.backgroundColor = colors_json.legend[i].color;
+
+          //svg.appendChild(rect);
+          elt.appendChild(key);
           elt.appendChild(value);
           legend.appendChild(elt);
         }
@@ -110,6 +114,7 @@
         return div;
       }
       col.addTo(map);
+      map.legendControl.addLegend(document.getElementById('legend').innerHTML);
     </script>
   </div>
   <br>

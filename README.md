@@ -21,7 +21,7 @@ On this very early stage, SHSD monitors usage of mail accounts to detect account
 
 * It parses the dovecot-imap log in /var/logs/mail.log
 * It stores the IPs from which each account has been authenticated
-* For each IP, [Onyphe](https://www.onyphe.io) is used to retrieve the associated AS and geolocation (with variable precision)
+* For each IP, GeoIP is used to retrieve the associated AS and geolocation (with variable precision)
 * It renders the authentications geolocations on a map
 
 It is aimed to be watched by the final users :

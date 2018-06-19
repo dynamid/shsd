@@ -237,7 +237,7 @@ def getGeoJSON(user):
 				properties={
 		"marker-color": as_color,
 		"marker-size": size,
-		"marker-symbol": "telephone",
+		"marker-symbol": "telephone",r
 		"description": "ip is : " + row[accounts.c.ip] + " | Org : " + row[accounts.c.ip_org]+ " | Firstseen : "+str(row[accounts.c.firstseen]) + " | Fastseen : " + str(row[accounts.c.lastseen])
 		}))
 

@@ -231,15 +231,15 @@ def getGeoJSON(user):
 		"marker-color": as_color,
 		"marker-size": size,
 		"marker-symbol": "home",
-		"description": "ip is : " + row[accounts.c.ip] + " | Org : " + row[accounts.c.ip_org] + " | Firstseen : "+str(row[accounts.c.firstseen]) + " | Lastseen : " + str(row[accounts.c.lastseen])
+		"description": "ip : " + row[accounts.c.ip] + " | Org : " + row[accounts.c.ip_org] + " | Firstseen : "+str(row[accounts.c.firstseen]) + " | Lastseen : " + str(row[accounts.c.lastseen])
 		}))
 			else :
 				my_feature.append(geojson.Feature(geometry=geojson.Point((row[accounts.c.ip_longitude], row[accounts.c.ip_latitude])),
 				properties={
 		"marker-color": as_color,
 		"marker-size": size,
-		"marker-symbol": "telephone",r
-		"description": "ip is : " + row[accounts.c.ip] + " | Org : " + row[accounts.c.ip_org]+ " | Firstseen : "+str(row[accounts.c.firstseen]) + " | Fastseen : " + str(row[accounts.c.lastseen])
+		"marker-symbol": "telephone",
+		"description": "ip : " + row[accounts.c.ip] + " | Org : " + row[accounts.c.ip_org]+ " | Firstseen : "+str(row[accounts.c.firstseen]) + " | Lastseen : " + str(row[accounts.c.lastseen])
 		}))
 
 	Session.commit()

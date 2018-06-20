@@ -31,94 +31,21 @@
   <br>
   <br>
 
-  <div id='map'>
-    <br>
-    <script>
-      L.mapbox.accessToken = 'pk.eyJ1IjoiY3lsaWEiLCJhIjoiY2poNmZwcW1mMDJ4ZTJ3cGc5dmo1NzA1NyJ9.JU-g1DpPB6jTT-tiVYcUgw';
-
-      //------- afficher map + markers
-      var coord = {{center_map}};
-      console.log(coord);
-      var map = L.mapbox.map('map')
-        .addLayer(L.mapbox.tileLayer('mapbox.streets'));
-      var myLayer = L.mapbox.featureLayer().addTo(map);
-      myLayer.loadURL('{{geojson}}'); //charge le contenu du // '/api/geoJson/user'
-      map.fitBounds([[coord[0],coord[1]], [coord[2],coord[3]]]);
-
-      //------- afficher popup
-      map.on('click', 'places', function(e) {
-        var coordinates = e.features[0].geometry.coordinates.slice();
-        var description = e.features[0].properties.description;
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        }
-        new mapboxgl.Popup()
-          .setLngLat(coordinates)
-          .setHTML(description)
-          .addTo(map);
-      });
-
-      //------- Changer le curseur quand il est sur un marker
-      map.on('mouseenter', 'places', function() {
-        map.getCanvas().style.cursor = 'pointer';
-      });
-
-      //------- Rechanger le curseur quand il sort du marker
-      map.on('mouseleave', 'places', function() {
-        map.getCanvas().style.cursor = '';
-      });
-
-      //------- Créer la légende à ajouter
-      var legend = document.createElement("div");
-      var colors = {{colors_to_print | tojson}};
-      var colors_json = JSON.parse(colors);
-
-      //-----------ADD LEGEND
-      var xmlns = "http://www.w3.org/2000/svg";
-      var div = document.createElement('div');
-      var col = L.control({
-        position: 'bottomright'
-      });
-
-      col.onAdd = function(map) {
-        var legend = document.createElement('div')
-        legend.id = "legend";
-        legend.height = 100;
-        for (i = 0; i < colors_json.legend.length; i++) {
-          var elt = document.createElement('div');
-          var value = document.createElement('span');
-          value.innerHTML = colors_json.legend[i].asn;
-
-/*          var svg = document.createElementNS(xmlns, 'svg');
-          svg.setAttributeNS(null, "width", 20);
-          svg.setAttributeNS(null, "height", 20);
-
-          var rect = document.createElementNS(xmlns, 'rect');
-          rect.setAttributeNS(null, "x", 0);
-          rect.setAttributeNS(null, "y", 0);
-          rect.setAttributeNS(null, "width", 50);
-          rect.setAttributeNS(null, "height", 50);
-          rect.setAttributeNS(null, "fill", colors_json.legend[i].color); */
-
-          var key = document.createElement('span');
-          key.className = 'legend-key';
-          key.style.backgroundColor = colors_json.legend[i].color;
-
-          //svg.appendChild(rect);
-          elt.appendChild(key);
-          elt.appendChild(value);
-          legend.appendChild(elt);
-        }
-        var div = L.DomUtil.create('div', 'myclass');
-        div.innerHTML = legend.outerHTML;
-        return div;
-      }
-      col.addTo(map);
-      map.legendControl.addLegend(document.getElementById('legend').innerHTML);
+    <div id='map' >
+    <script type="text/javascript">
+      const center = {{center_map}};
+      const geojson = '{{geojson}}';
+      const colors = {{colors_to_print | tojson}}
+      console.log(colors);
     </script>
-  </div>
+    <script  src="../static/Functions.js"></script>
+    <script type="text/javascript">
+      var map = printMap(center, geojson);
+      addLegend(colors,map);
+    </script>
   <br>
   <br>
+    </div>
   <footer>
     <p> ceci est le footer et sera rempli plus tard</p>
   </footer>

@@ -39,6 +39,9 @@ def index():
 def details():
 	return render_template('details.html', devices=getDevices(), connections=getConnections())
 
+@app.route('/about')
+def about():
+	return render_template('about.html')
 
 @app.route('/api/getDevices')
 def getJSONDevices():

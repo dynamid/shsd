@@ -3,11 +3,14 @@
 
 <head>
   <title>SHSD - Self-Hosting Security Dashboard</title>
+  <link rel="shortcut icon" type="image/x-icon" href="../static/logo.png" />
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
   <link rel="stylesheet" href="/../static/style.css">
   <!-- inclure la carte -->
   <script src='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js'></script>
   <link href='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css' rel='stylesheet' />
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
 
 <body>
@@ -16,39 +19,27 @@
   <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v1.0.0/MarkerCluster.Default.css' rel='stylesheet' />
 
   <!-- menu -->
-  <header>
-    <div class="navigation-bar">
-      <div id="navigation-container">
-        <a href="#"><img id="logo" src="../static/logo.png" alt="shsd" href="index.html"></a>
-        <ul class="menu">
-          <li class="menu"><a href="#">Home</a></li>
-          <li class="menu"><a href="../static/about.html">About</a></li>
-        </ul>
-      </div>
-    </div>
-  </header>
-
-  <br>
-  <br>
-
-    <div id='map' >
+  <div class="topnav" id="header">
+    <img id="logo" src="../static/logo.png" alt="shsd" href="index">
+      <a href="/">Home</a>
+      <a href="about">About</a>
+      <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="iconElement()">&#9776;</a>
+  </div>
+  <div id='map'>
     <script type="text/javascript">
       const center = {{center_map}};
       const geojson = '{{geojson}}';
       const colors = {{colors_to_print | tojson}}
-      console.log(colors);
     </script>
-    <script  src="../static/Functions.js"></script>
-    <script type="text/javascript">
-      var map = printMap(center, geojson);
-      addLegend(colors,map);
-    </script>
-  <br>
-  <br>
-    </div>
-  <footer>
-    <p> ceci est le footer et sera rempli plus tard</p>
-  </footer>
+<script src="../static/Functions.js"></script>
+<script type="text/javascript">
+  var map = printMap(center, geojson);
+  addLegend(colors, map);
+</script>
+</div>
+<footer>
+  <p> ceci est le footer et sera rempli plus tard</p>
+</footer>
 </body>
 
 </html>

@@ -15,6 +15,7 @@ import collections
 import threading
 import configparser, argparse, os
 import GeoIP
+import string
 
 
 # local imports
@@ -158,6 +159,14 @@ def addConnectionJSON():
 	#threading.Thread(target=updateIPInfo).start()
 	#startBackgoundTasks()
 	return("JSON ok")
+#-----------------------GET PORT FROM SHSD.CONF
+def getPort():
+	myfile = open("/etc/shsd.conf", "r")
+	data = str(myfile.read())
+	data = data.split("127.0.0.1:",1)[1]
+	data = data.split('\n', 1)[0]
+	return data
+getPort()
 #-----------------------MARKERS COLORS
 as_colorlist = ["#FE0000","#FD0065","#00FAD0","#5C00FA","#002AFA","#00A7FA","#00FA00","#FAE900","#FA7500","#D300FD"]
 def colorAs(user):
@@ -306,4 +315,4 @@ print('my ip is ' + myip)
 startBackgoundTasks(Session) #url_for('populateIpInfo'))
 
 if __name__ == '__main__':
-	app.run(debug=False)
+	app.run(debug=False,port=getPort())

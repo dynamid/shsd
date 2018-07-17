@@ -6,7 +6,32 @@ body {
   margin: 0;
   overflow: visible;
 }
+#about {
+  background-color: #73b6e6;
+  color: white;
+}
+#text{
+  margin: 50px;
+  font-family: 'HomepageBaukasten-Bold1';
 
+  line-height: 24px;
+}
+#h1{
+  text-align: center;
+}
+hr {
+  width:40%;
+  height:1px;
+  color: #16193b;}
+ul{
+  list-style: none
+}
+li::before {
+  content: "\25AA";
+  color: #16193b;
+  display: inline-block; width: 1em;
+  margin-left: -1em
+}
 .topnav {
   overflow: hidden;
   background-color: #16193b;
@@ -19,13 +44,14 @@ body {
 }
 
 .topnav a {
+    font-family: 'HomepageBaukasten-Bold1';
+  font-size: 22px;
   float: right;
   display: block;
   color: #f2f2f2;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-  font-size: 17px;
   border-radius: 4px;
 }
 
@@ -45,6 +71,7 @@ body {
   .topnav a.icon {
     float: right;
     display: block;
+    padding: 7px 8px;
   }
 }
 
@@ -64,6 +91,15 @@ body {
   }
 }
 
+@font-face {
+    font-family: 'HomepageBaukasten-Bold1';
+    src:url('HomepageBaukasten-Bold1.ttf.woff') format('woff'),
+        url('HomepageBaukasten-Bold1.ttf.svg#HomepageBaukasten-Bold1') format('svg'),
+        url('HomepageBaukasten-Bold1.ttf.eot'),
+        url('HomepageBaukasten-Bold1.ttf.eot?#iefix') format('embedded-opentype');
+    font-weight: normal;
+    font-style: normal;
+}
 #map {
   width: 100vw;
   height: 78vh;
@@ -148,6 +184,7 @@ body {
 }
 
 footer {
+    font-family: 'HomepageBaukasten-Bold1';
   text-align: center;
    position: fixed;
    left: 0;

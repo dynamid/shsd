@@ -4,20 +4,22 @@
 <head>
   <title>SHSD - Self-Hosting Security Dashboard</title>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-  <link rel="stylesheet" href="/../static/style.css">
+  <link rel="stylesheet" href="static/style.css">
   <!-- inclure la carte -->
 </head>
 
-<body>
+<body id="about">
   <div class="topnav" id="header">
-    <img id="logo" src="../static/logo.png" alt="shsd" href="index">
+    <img id="logo" src="static/logo.png" alt="shsd" href="index">
       <a href="index">Home</a>
       <a href="about">About</a>
       <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="iconElement()">&#9776;</a>
   </div>
 
-
-<H1> How to use SHSD ?</H1>
+  <script src="static/Functions.js"></script>
+<div id="text">
+<H1 id="h1"> How to use SHSD ?</H1>
+<hr noshade>
 
 <ul>
   <li>Make SHSD your default homepage</li>
@@ -27,6 +29,8 @@
 </ul>
 
 Please keep in mind that geolocation is not exact and sometimes even clearly wrong. Cellular networks (3G/4G) usually provide very poor location precision (country only) while ADSL/Cable/Fiber networks provide better geolocation.
+
+</div>
 <footer>
   <p> ceci est le footer et sera rempli plus tard</p>
 </footer>

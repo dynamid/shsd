@@ -3,10 +3,10 @@
 
 <head>
   <title>SHSD - Self-Hosting Security Dashboard</title>
-  <link rel="shortcut icon" type="image/x-icon" href="../static/logo.png" />
+  <link rel="shortcut icon" type="image/x-icon" href="static/logo.png" />
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
-  <link rel="stylesheet" href="/../static/style.css">
+  <link rel="stylesheet" href="static/style.css">
   <!-- inclure la carte -->
   <script src='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js'></script>
   <link href='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css' rel='stylesheet' />
@@ -20,7 +20,7 @@
 
   <!-- menu -->
   <div class="topnav" id="header">
-    <img id="logo" src="../static/logo.png" alt="shsd" href="index">
+    <img id="logo" src="static/logo.png" alt="shsd" href="index">
       <a href="/">Home</a>
       <a href="about">About</a>
       <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="iconElement()">&#9776;</a>
@@ -31,7 +31,7 @@
       const geojson = '{{geojson}}';
       const colors = {{colors_to_print | tojson}}
     </script>
-<script src="../static/Functions.js"></script>
+<script src="static/Functions.js"></script>
 <script type="text/javascript">
   var map = printMap(center, geojson);
   addLegend(colors, map);

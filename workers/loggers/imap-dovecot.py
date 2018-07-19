@@ -31,13 +31,13 @@ def parselog(maillog):
             atoms = line.split()
             month = atoms[0]
             day = atoms[1]
-            accounts.add(""+ip+"::"+user+"::"+months[month]+"::"+day) #append({'user' : user, 'ip' : ip})
+            accounts.add(""+ip+":!:"+user+":!:"+months[month]+":!:"+day) #append({'user' : user, 'ip' : ip})
     return accounts
 
 def jsonify(accounts):
     res = []
     for account in accounts:
-        newaccount = account.split("::")
+        newaccount = account.split(":!:")
         res.append({'ip':newaccount[0], 'user': newaccount[1], 'month': newaccount[2], 'day': newaccount[3], 'year': '2018'})
     return(json.dumps({'service' : 'IMAP', 'connections' : res}))
 

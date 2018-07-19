@@ -27,7 +27,12 @@ app = Flask(__name__)
 configfiles = ["/etc/shsd.conf", os.path.expanduser('~/.config/shsd.conf')]
 
 def getCurrentUser():
-	user = request.args.get("user", "user5")
+	try:
+		user = request.headers['Remote-User']
+	except KeyError:
+		user = request.args.get("user", "user5")
+	print(user)
+	#user = request.args.get("user", "user5")
 	return user
 
 @app.route('/')

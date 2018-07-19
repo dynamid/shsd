@@ -33,7 +33,7 @@ def getCurrentUser():
 @app.route('/')
 @app.route('/index')
 def index():
-	return render_template('index.html', center_map=getAvgPositions(getCurrentUser()), geojson=url_for('getGeoJSON', user=getCurrentUser()),
+	return render_template('index.html', center_map=getAvgPositions(getCurrentUser()), geojson=url_for('getGeoJSON'),
 	colors_to_print=getColorsFromDB(getCurrentUser()))
 
 @app.route('/details')
@@ -219,8 +219,9 @@ def markerSize(first,last):
 
 
 #ajouter dynamiquement les markers sur la map
-@app.route('/api/getGeoJSON/<user>')
-def getGeoJSON(user):
+@app.route('/api/getGeoJSON')
+def getGeoJSON():
+	user = getCurrentUser()
 	my_feature = []
 
 	s = select([accounts.c.ip_longitude,accounts.c.ip_latitude,accounts.c.ip_city,accounts.c.ip,

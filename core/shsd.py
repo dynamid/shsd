@@ -164,14 +164,8 @@ def addConnectionJSON():
 	#threading.Thread(target=updateIPInfo).start()
 	#startBackgoundTasks()
 	return("JSON ok")
-#-----------------------GET PORT FROM SHSD.CONF
-def getPort():
-	myfile = open("/etc/shsd.conf", "r")
-	data = str(myfile.read())
-	data = data.split("127.0.0.1:",1)[1]
-	data = data.split('\n', 1)[0]
-	return data
-getPort()
+
+
 #-----------------------MARKERS COLORS
 as_colorlist = ["#FE0000","#FD0065","#00FAD0","#5C00FA","#002AFA","#00A7FA","#00FA00","#FAE900","#FA7500","#D300FD"]
 def colorAs(user):
@@ -295,6 +289,7 @@ if __name__ == '__main__':
 try:
 	config = configparser.ConfigParser()
 	config.read(configfiles)
+	port = config['DEFAULT']['coreurl'].split(":")[-1]
 	databasef = config['core']['database']
 	geoloc = config['core']['geoloc']
 	if (geoloc == 'geoip'):
@@ -320,4 +315,4 @@ print('my ip is ' + myip)
 startBackgoundTasks(Session) #url_for('populateIpInfo'))
 
 if __name__ == '__main__':
-	app.run(debug=False,port=getPort())
+	app.run(debug=False,port=port)

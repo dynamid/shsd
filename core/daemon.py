@@ -15,7 +15,7 @@ def isLocalIP(ip):
     return (ip.startswith("192.168.") or ip.startswith("172.16.") or ip.startswith("10.") or ip.startswith("127."))
 
 def updateIPInfo():
-    print("Updating IP Info")
+    #print("Updating IP Info")
     global Session
     s = select([accounts]).where(accounts.c.is_populated == False)
     for row in Session.execute(s):

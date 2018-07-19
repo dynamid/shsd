@@ -36,8 +36,8 @@ def getCurrentUser():
 @app.route('/')
 @app.route('/index')
 def index():
-	return render_template('index.html', center_map=getAvgPositions(getCurrentUser()), geojson=url_for('getGeoJSON'),
-	colors_to_print=getColorsFromDB(getCurrentUser()))
+	return render_template('index.html', center_map=getAvgPositions(getCurrentUser()), colors_to_print=getColorsFromDB(getCurrentUser())) #  geojson="api/getGeoJSON" #url_for('getGeoJSON'),
+
 
 @app.route('/details')
 def details():

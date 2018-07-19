@@ -31,8 +31,6 @@ def getCurrentUser():
 		user = request.headers['Remote-User']
 	except KeyError:
 		user = request.args.get("user", "user5")
-	print(user)
-	#user = request.args.get("user", "user5")
 	return user
 
 @app.route('/')

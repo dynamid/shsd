@@ -27,7 +27,8 @@ def parselog(maillog):
     for line in maillog:
         if (re.search("dovecot.*Login", line)):
             user = re.findall("user=<(.*?)>", line)[0]
-            ip =  re.findall("rip=([\d\.]*)", line)[0]
+            #ip =  re.findall("rip=([\d\.]*)", line)[0]
+            ip =  re.findall("rip=([\d\.\:\S]*)", line)[0]
             atoms = line.split()
             month = atoms[0]
             day = atoms[1]
@@ -43,6 +44,8 @@ def jsonify(accounts):
 
 def pushJSON(accounts, coreurl):
     #print('pushing ' + str(accounts) + ' to ' + coreurl)
+    print(accounts)
+    print(jsonify(accounts))
     r = requests.post(coreurl + "/api/addConnectionJSON", json=jsonify(accounts))
     return
 

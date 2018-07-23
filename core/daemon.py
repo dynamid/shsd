@@ -11,7 +11,8 @@ onyphe_mylocation = None
 Session = None
 
 def isLocalIP(ip):
-    return (ip.startswith("192.168.") or ip.startswith("172.16.") or ip.startswith("10.") or ip.startswith("127."))
+    return (ip.startswith("192.168.") or ip.startswith("172.16.") or ip.startswith("10.") or ip.startswith("127.")
+    or ip.startswith("::1") or ip.startswith("fe80:"))
 
 def updateIPInfo():
     #print("Updating IP Info")

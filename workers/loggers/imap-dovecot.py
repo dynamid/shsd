@@ -44,8 +44,8 @@ def jsonify(accounts):
 
 def pushJSON(accounts, coreurl):
     #print('pushing ' + str(accounts) + ' to ' + coreurl)
-    print(accounts)
-    print(jsonify(accounts))
+    #print(accounts)
+    #print(jsonify(accounts))
     r = requests.post(coreurl + "/api/addConnectionJSON", json=jsonify(accounts))
     return
 

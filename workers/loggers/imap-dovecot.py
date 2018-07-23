@@ -6,6 +6,7 @@ import requests
 import json
 import configparser,os
 import argparse
+import time
 
 
 months = {'Jan' : '01',
@@ -28,7 +29,7 @@ def parselog(maillog):
         if (re.search("dovecot.*Login", line)):
             user = re.findall("user=<(.*?)>", line)[0]
             #ip =  re.findall("rip=([\d\.]*)", line)[0]
-            ip =  re.findall("rip=([\d\.\:\S]*)", line)[0]
+            ip =  re.findall("rip=([\d\.\:a-zA-Z]*)", line)[0]
             atoms = line.split()
             month = atoms[0]
             day = atoms[1]
@@ -46,7 +47,12 @@ def pushJSON(accounts, coreurl):
     #print('pushing ' + str(accounts) + ' to ' + coreurl)
     #print(accounts)
     #print(jsonify(accounts))
-    r = requests.post(coreurl + "/api/addConnectionJSON", json=jsonify(accounts))
+    for i in range(1,10):
+        try:
+            r = requests.post(coreurl + "/api/addConnectionJSON", json=jsonify(accounts))
+        except:
+            time.sleep(1)
+            pass
     return
 
 

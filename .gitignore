@@ -2,3 +2,4 @@ database.db
 notes.txt
 mail.log
 __pycache__
+*.log

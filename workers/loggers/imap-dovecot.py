@@ -50,6 +50,7 @@ def pushJSON(accounts, coreurl):
     for i in range(1,10):
         try:
             r = requests.post(coreurl + "/api/addConnectionJSON", json=jsonify(accounts))
+            break
         except:
             time.sleep(1)
             pass

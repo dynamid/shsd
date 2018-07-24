@@ -19,7 +19,7 @@ import string
 
 
 # local imports
-from daemon import startBackgoundTasks, updateIPInfo, isLocalIP
+from daemon import startBackgoundTasks, updateIPInfo, isLocalIP, isipv4
 from database import *
 
 #p = manuf.MacParser(update=False)
@@ -113,11 +113,11 @@ def addConnectionJSON():
 		               accounts.c.ip == ip, accounts.c.login == user)).count()
 		known = Session.execute(s).scalar()
 		if (known == 0):
-			if (geoloc == 'onyphe'):
+			if (geoloc == 'onyphe' or not isipv4(ip)):
 				Session.execute(accounts.insert(), [
 		                	{'login': user, 'ip': ip, 'firstseen': date, 'lastseen': date, 'is_populated': False}
 		           ])
-			elif (geoloc == 'geoip'):
+			elif (geoloc == 'geoip' and isipv4(ip)):
 				# print('adding ' + ip)
 				if (isLocalIP(ip)):
 					new_as = "LAN"
@@ -296,6 +296,8 @@ try:
 		try:
 			geoip_loc = GeoIP.open(geoipdb + "/GeoIPCity.dat", GeoIP.GEOIP_STANDARD)
 			geoip_as = GeoIP.open(geoipdb + "/GeoIPASNum.dat", GeoIP.GEOIP_STANDARD)
+			#geoip_locv6 = GeoIP.open(geoipdb + "/GeoLiteCityv6.dat", GeoIP.GEOIP_STANDARD)
+			#geoip_asv6 = GeoIP.open(geoipdb + "/GeoIPASNumv6.dat", GeoIP.GEOIP_STANDARD)
 		except:
 			print('Cannot open GeoIP database. Did you install it ? (apt-get install geoip-database-contrib)')
 			exit(1)

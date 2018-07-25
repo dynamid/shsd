@@ -60,7 +60,12 @@ function addLegend(my_colors, map) { //{{colors_to_print | tojson}}
   var legend = document.createElement("div");
   var colors = my_colors;
   var colors_json = JSON.parse(colors);
-
+  // if no logs
+    if (colors_json.legend.length === 0){
+      var to_add = {asn: "No connection to print", color: "#ffffff"};
+      colors_json.legend.push(to_add);
+    }
+    console.log(colors_json);
   //-----------ADD LEGEND
   var div = document.createElement('div');
   var col = L.control({
@@ -122,3 +127,4 @@ function handleClick() {
     }
   });
 }
+

@@ -272,6 +272,11 @@ def getAvgPositions(user):
 	for row in Session.execute(max):
 		pos.append(row[0])
 		pos.append(row[1])
+	if pos[0] is None:
+		pos[0] = -45
+		pos[1] = -90
+		pos[2] = 45
+		pos[3] = 90
 
 	return pos
 #liste des couleurs
@@ -317,3 +322,4 @@ startBackgoundTasks(Session) #url_for('populateIpInfo'))
 
 if __name__ == '__main__':
 	app.run(debug=False,port=port)
+

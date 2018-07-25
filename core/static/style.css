@@ -142,15 +142,14 @@ li::before {
   z-index: 1000;
   left: calc(100% - 50px);
   top : 0;
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
 
   display: flex;
   text-align: center;
   line-height: 15px;
 
 }
-
 
 .legend-key {
   display: inline-block;
@@ -195,3 +194,4 @@ footer {
   overflow: hidden;
   z-index: 1000;
 }
+

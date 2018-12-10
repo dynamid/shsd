@@ -127,4 +127,3 @@ function handleClick() {
     }
   });
 }
-

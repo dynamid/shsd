@@ -27,8 +27,8 @@
   <div id='map'>
     <script type="text/javascript">
       const center = {{center_map}};
-      const geojson = "api/getGeoJSON";
-      //'{{geojson}}';
+      const geojson =  "api/getGeoJSON?user={{user}}";
+      //'{{geojson | safe}}';
       const colors = {{colors_to_print | tojson}}
     </script>
 <script src="static/Functions.js"></script>

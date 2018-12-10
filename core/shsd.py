@@ -36,7 +36,7 @@ def getCurrentUser():
 @app.route('/')
 @app.route('/index')
 def index():
-	return render_template('index.html', center_map=getAvgPositions(getCurrentUser()), colors_to_print=getColorsFromDB(getCurrentUser())) #  geojson="api/getGeoJSON" #url_for('getGeoJSON'),
+	return render_template('index.html', user=getCurrentUser() , center_map=getAvgPositions(getCurrentUser()), colors_to_print=getColorsFromDB(getCurrentUser())) #  geojson="api/getGeoJSON" #url_for('getGeoJSON'),
 
 
 @app.route('/details')
@@ -322,4 +322,3 @@ startBackgoundTasks(Session) #url_for('populateIpInfo'))
 
 if __name__ == '__main__':
 	app.run(debug=False,port=port)
-

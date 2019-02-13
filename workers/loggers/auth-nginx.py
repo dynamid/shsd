@@ -1,14 +1,11 @@
 #!/usr/bin/python3
 
-
-import re
 import requests
 import json
 import configparser
 import os
 import argparse
 import time
-from os import listdir
 
 months = {'Jan': '01',
           'Feb': '02',
@@ -54,12 +51,12 @@ def jsonify(accounts):
 
 
 def pushJSON(accounts, coreurl):
-    #print('pushing ' + str(accounts) + ' to ' + coreurl)
+    # print('pushing ' + str(accounts) + ' to ' + coreurl)
     # print(accounts)
     # print(jsonify(accounts))
     for i in range(1, 10):
         try:
-            r = requests.post(
+            requests.post(
                 coreurl + "/api/addConnectionJSON", json=jsonify(accounts))
             break
         except:
@@ -73,7 +70,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', type=str, help='config file')
     args = parser.parse_args()
 
-    if args.c != None:
+    if args.c is not None:
         configfiles = args.c
     else:
         configfiles = ["/etc/shsd.conf",

@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-#import subprocess
 
 import re
 import requests
@@ -32,7 +31,7 @@ def parselog(maillog):
             # print(line)
             user, ip = re.findall(
                 "for (\S*?) from ([\d\.\:a-zA-Z]*) port", line)[0]
-            #print(user + " and ip "+ ip)
+            # print(user + " and ip "+ ip)
             atoms = line.split()
             month = atoms[0]
             day = atoms[1]
@@ -51,12 +50,12 @@ def jsonify(accounts):
 
 
 def pushJSON(accounts, coreurl):
-    #print('pushing ' + str(accounts) + ' to ' + coreurl)
+    # print('pushing ' + str(accounts) + ' to ' + coreurl)
     # print(accounts)
     # print(jsonify(accounts))
     for i in range(1, 10):
         try:
-            r = requests.post(
+            requests.post(
                 coreurl + "/api/addConnectionJSON", json=jsonify(accounts))
             break
         except:
@@ -70,7 +69,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', type=str, help='config file')
     args = parser.parse_args()
 
-    if args.c != None:
+    if args.c is not None:
         configfiles = args.c
     else:
         configfiles = ["/etc/shsd.conf",

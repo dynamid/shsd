@@ -20,15 +20,15 @@ def runarp():
             "([\da-f]{2}\:[\da-f]{2}\:[\da-f]{2}\:[\da-f]{2}\:[\da-f]{2}\:[\da-f]{2})", line)
         if len(hw) < 1:
             continue
-        #print("ligne " + str(ip) + " " + str(hw))
+        # print("ligne " + str(ip) + " " + str(hw))
         devices.append({'ip': ip[0], 'hw': hw[0]})
     return devices
 
 
 def push(devices):
     for device in devices:
-        r = requests.get(webappurl + "api/addDevice/" +
-                         device['ip'] + "/" + device['hw'])
+        requests.get(webappurl + "api/addDevice/" +
+                     device['ip'] + "/" + device['hw'])
         # print(r.content)
     return
 

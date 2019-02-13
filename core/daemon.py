@@ -1,11 +1,12 @@
 import threading
-from sqlalchemy.sql import *
+# from sqlalchemy.sql import *
+from sqlalchemy import select, and_
 import time
 import requests
 import random
-from flask import *
+# from flask import *
 
-from database import *
+from database import accounts
 
 import re
 
@@ -23,20 +24,20 @@ def isipv4(ip):
 
 
 def updateIPInfo():
-    #print("Updating IP Info")
+    # print("Updating IP Info")
     global Session
-    s = select([accounts]).where(accounts.c.is_populated == False)
+    s = select([accounts]).where(accounts.c.is_populated is False)
     for row in Session.execute(s):
         print('Updating ' + row[accounts.c.ip])
         if (isLocalIP(row[accounts.c.ip])):
             global onyphe_mylocation
-            if (onyphe_mylocation == None):
+            if (onyphe_mylocation is None):
                 onyphe_myip = requests.get("https://www.onyphe.io/api/myip")
                 if (onyphe_myip.status_code == 200 and len(onyphe_myip.json()['myip']) > 0):
                     myip = onyphe_myip.json()['myip']
                     onyphe_mylocation = requests.get(
                         "https://www.onyphe.io/api/geoloc/" + myip)
-            if (onyphe_mylocation != None and onyphe_mylocation.status_code == 200 and len(onyphe_mylocation.json()['results']) > 0):
+            if (onyphe_mylocation is not None and onyphe_mylocation.status_code == 200 and len(onyphe_mylocation.json()['results']) > 0):
                 Session.execute(accounts.update().where(
                     and_(accounts.c.ip == row[accounts.c.ip], accounts.c.login == row[accounts.c.login])).values(
                     ip_org="LAN",
@@ -88,7 +89,7 @@ def updateIPInfoDaemon():
         try:
             time.sleep(2)
             updateIPInfo()
-            #requests.get(url_for('populateIpInfo', _external=True))
+            # requests.get(url_for('populateIpInfo', _external=True))
             time.sleep(60 + random.randint(2, 10))
         except:
             pass

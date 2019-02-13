@@ -1,30 +1,25 @@
 #!/usr/bin/python3
 
-from flask import *
-from sqlalchemy import *
-from sqlalchemy.sql import *
+from flask import Flask, render_template, request, jsonify, abort
+from sqlalchemy import create_engine, select, func, and_
+# from sqlalchemy.sql import *
 from sqlalchemy.orm import scoped_session, sessionmaker
-#from manuf import manuf
+# from manuf import manuf
 import datetime
-import re
 import requests
-import time
 import geojson
 import json
-import collections
-import threading
 import configparser
 import argparse
 import os
 import GeoIP
-import string
 
 
 # local imports
-from daemon import startBackgoundTasks, updateIPInfo, isLocalIP, isipv4
-from database import *
+from daemon import startBackgoundTasks, isLocalIP, isipv4
+from database import metadata, accounts, devices, ascolors
 
-#p = manuf.MacParser(update=False)
+# p = manuf.MacParser(update=False)
 app = Flask(__name__)
 configfiles = ["/etc/shsd.conf", os.path.expanduser('~/.config/shsd.conf')]
 
@@ -113,7 +108,7 @@ def addConnectionJSON():
     if not request.json:
         abort(400)
     content = json.loads(request.get_json(force=True))
-    service = content['service']
+    # service = content['service']
     connections = content['connections']
     for connection in connections:
         date = datetime.date(int(connection['year']), int(
@@ -140,7 +135,7 @@ def addConnectionJSON():
                     new_as = tmp[0]
                     new_org = " ".join(tmp[1:])
                     new_geoloc = geoip_loc.record_by_addr(ip)
-                if (new_as != None and new_geoloc != None):
+                if (new_as is not None and new_geoloc is not None):
                     # print ("" + str(new_as) + str(new_geoloc))
                     Session.execute(accounts.insert(), [
                                     {'login': user, 'ip': ip, 'firstseen': date, 'lastseen': date, 'is_populated': True,
@@ -180,7 +175,7 @@ def addConnectionJSON():
     return("JSON ok")
 
 
-#-----------------------MARKERS COLORS
+# -----------------------MARKERS COLORS
 as_colorlist = ["#FE0000", "#FD0065", "#00FAD0", "#5C00FA",
                 "#002AFA", "#00A7FA", "#00FA00", "#FAE900", "#FA7500", "#D300FD"]
 
@@ -235,7 +230,7 @@ def getColorsFromDB(user):
     legend = {'legend': col}
     json_data = json.dumps(legend)
     return json_data
-#-----------------------MARKERS SIZE
+# -----------------------MARKERS SIZE
 
 
 def markerSize(first, last):
@@ -264,7 +259,7 @@ def getGeoJSON():
         as_color = getASColor(row[accounts.c.ip_as], row[accounts.c.login])
         size = markerSize(row[accounts.c.firstseen], row[accounts.c.lastseen])
 
-        if row[accounts.c.ip_latitude] != None and row[accounts.c.ip_longitude] != None:
+        if row[accounts.c.ip_latitude] is not None and row[accounts.c.ip_longitude] is not None:
             if row[accounts.c.ip_city] == 'LAN':
                 my_feature.append(geojson.Feature(geometry=geojson.Point((row[accounts.c.ip_longitude], row[accounts.c.ip_latitude])),
                                                   properties={
@@ -292,8 +287,7 @@ def getGeoJSON():
 
 def getAvgPositions(user):
     pos = []
-    delta_lat = []
-    delta_long = []
+
 # point central
     min = select([func.min(accounts.c.ip_latitude), func.min(
         accounts.c.ip_longitude)]).where(accounts.c.login == user).distinct()
@@ -321,7 +315,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', type=str, help='config file')
     args = parser.parse_args()
 
-    if args.c != None:
+    if args.c is not None:
         configfiles = args.c
 
 try:
@@ -337,8 +331,8 @@ try:
                 geoipdb + "/GeoIPCity.dat", GeoIP.GEOIP_STANDARD)
             geoip_as = GeoIP.open(
                 geoipdb + "/GeoIPASNum.dat", GeoIP.GEOIP_STANDARD)
-            #geoip_locv6 = GeoIP.open(geoipdb + "/GeoLiteCityv6.dat", GeoIP.GEOIP_STANDARD)
-            #geoip_asv6 = GeoIP.open(geoipdb + "/GeoIPASNumv6.dat", GeoIP.GEOIP_STANDARD)
+            # geoip_locv6 = GeoIP.open(geoipdb + "/GeoLiteCityv6.dat", GeoIP.GEOIP_STANDARD)
+            # geoip_asv6 = GeoIP.open(geoipdb + "/GeoIPASNumv6.dat", GeoIP.GEOIP_STANDARD)
         except:
             print(
                 'Cannot open GeoIP database. Did you install it ? (apt-get install geoip-database-contrib)')

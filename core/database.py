@@ -1,6 +1,7 @@
-from sqlalchemy import *
-from sqlalchemy.sql import *
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy import MetaData, Table, Column
+from sqlalchemy import Integer, String, Date, Float, Boolean
+# from sqlalchemy.sql import *
+# from sqlalchemy.orm import scoped_session, sessionmaker
 
 
 metadata = MetaData()
